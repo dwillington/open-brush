@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8"><meta charset="UTF-8">
+<style>
+  div.settings {
+      display:grid;
+      grid-template-columns: max-content max-content;
+      grid-gap:5px;
+  }
+  div.settings label       { text-align:left; }
+  div.settings label:after { content: ""; }
+</style>
+</head>
+<body>
+<div class="settings">
+  <label>Brush type</label> <select id="brush.type" name="brush.type"></select>
+  <label>Brush size</label> <input id="brush.size" value=".025">
+  <label>Brush color</label> <input id="brush.color" value="LightBlue">
+</div>
+<br />
+<button onclick="setBrushOptions();">Set Brush Options</button>
+<br /><br />
+<br /><br />
+<button onclick="drawPietMondrian();">drawPietMondrian</button>
+<br /><br />
+<button onclick="drawTiledLines();">drawTiledLines</button>
+<br /><br />
+<button onclick="drawTriangularMesh();">drawTriangularMesh</button>
+<br /><br />
+<button onclick="drawJoyDivision();">drawJoyDivision</button>
+<br /><br />
+<button onclick="drawCubicDisarray();">drawCubicDisarray</button>
+<br /><br />
+<button onclick="drawUnDeuxTrois();">drawUnDeuxTrois</button>
+<br /><br />
+<button onclick="drawHypnoticSquares();">drawHypnoticSquares</button>
+<br /><br />
+<label><button onclick="clearScene();">Clear Current Scene</button></label> and move user to Z 
+<input id="user.Z" value="10">
+<br /><br />
+<textarea id="results" cols="80" rows="20"></textarea>
+<br /><br />
+<script src="js/helper.js"></script>
+<script>
+
+  window.addEventListener("load", function() {
+    initBrushes();
+  });
+
+  /**
+  Everything below was ripped from below URL and modified to work in Open Brush
+  https://generativeartistry.com/tutorials/
+  */
+
+  class PietMondrian {
+
+    constructor(size, step) {
+      this.size = size;
+      this.step = step;
+      this.squares = [{
+          x: 0,
+          y: 0,
+          width: size,
+          height: size,
+          color: "White"
+        }];
+      this.white = '#F2F5F1';
+      this.colors = ['D40920', '1356A2', 'F7D842'];
+
+      this.START_X = 0, this.START_Y = 15, this.START_Z = 0;
+      this.BORDER_BRUSH_TYPE = "OilPaint", this.BORDER_Z_OFFSET = -0.05;
+
+      for (var i = 0; i < size; i += step) {
+        this.splitSquaresWith({ y: i });
+        this.splitSquaresWith({ x: i });
+      }
+    }
+
+    splitSquaresWith(coordinates) {
+      const { x, y } = coordinates;
+
+      for (var i = this.squares.length - 1; i >= 0; i--) {
+        const square = this.squares[i];
+
+        if (x && x > square.x && x < square.x + square.width) {
+            if(Math.random() > 0.5) {
+              this.squares.splice(i, 1);
+              this.splitOnX(square, x); 
+            }
+        }
+
+        if (y && y > square.y && y < square.y + square.height) {
+            if(Math.random() > 0.5) {
+              this.squares.splice(i, 1);
+              this.splitOnY(square, y); 
+            }
+        }
+      }
+    }
+
+    splitOnX(square, splitAt) {
+      var squareA = {
+        x: square.x,
+        y: square.y,
+        width: square.width - (square.width - splitAt + square.x),
+        height: square.height
+      };
+
+      var squareB = {
+      x: splitAt,
+      y: square.y,
+      width: square.width - splitAt + square.x,
+      height: square.height
+      };
+
+      this.squares.push(squareA);
+      this.squares.push(squareB);
+    }
+
+    splitOnY(square, splitAt) {
+      var squareA = {
+        x: square.x,
+        y: square.y,
+        width: square.width,
+        height: square.height - (square.height - splitAt + square.y)
+      };
+
+      var squareB = {
+      x: square.x,
+      y: splitAt,
+      width: square.width,
+      height: square.height - splitAt + square.y
+      };
+
+      this.squares.push(squareA);
+      this.squares.push(squareB);
+    }
+
+    drawRectangle(x, y, width, height, color) {
+      var commandStrings = [];
+      // BORDER COLOR AND BRUSH
+      commandStrings.push(`brush.type=${this.BORDER_BRUSH_TYPE}&color.set.html=Black`);
+      commandStrings.push(`draw.path=[${x},${y},${this.START_Z+this.BORDER_Z_OFFSET}],[${x+width},${y},${this.START_Z+this.BORDER_Z_OFFSET}],[${x+width},${y+height},${this.START_Z+this.BORDER_Z_OFFSET}],[${x},${y+height},${this.START_Z+this.BORDER_Z_OFFSET}],[${x},${y},${this.START_Z+this.BORDER_Z_OFFSET}]`);
+      // FILL COLOR AND BRUSH, UnlitHull works surprisingly well
+      commandStrings.push(`brush.type=UnlitHull&color.set.html=${color}`);
+      commandStrings.push(`draw.path=[${x},${y},${this.START_Z}],[${x+width},${y},${this.START_Z}],[${x+width},${y+height},${this.START_Z}],[${x},${y+height},${this.START_Z}],[${x},${y},${this.START_Z}]`);
+      sendCommands(commandStrings);
+    }
+
+    draw() {
+      // randomly set roughy 20-30% of ALL the squares to Red, Yellow, or Blue according to "Piet Mondrian style" (this is obviously subjective)
+      for (var i = 0; i < this.squares.length; i++) {
+        var randInt = getRandomInt(0, 9);
+        if(randInt < 3) {
+          this.squares[i].color = this.colors[randInt];
+        } else {
+          this.squares[i].color = "White";
+        }
+      }
+      for (var i = 0; i < this.squares.length; i++) {
+        this.drawRectangle(
+          this.squares[i].x,
+          this.squares[i].y,
+          this.squares[i].width,
+          this.squares[i].height,
+          this.squares[i].color
+        );
+      }
+    }
+
+  }
+
+  class TiledLines {
+
+    constructor(size, step) {
+      this.size = size;
+      this.step = step;
+      this.START_Z = 0;
+    }
+
+    drawTiledLines(x, y, width, height) {
+      var commandStrings = [];
+      commandStrings.push(`color.set.html=${getRandomColorInHex()}`);
+
+      var leftToRight = Math.random() >= 0.5;
+      if(leftToRight) {
+        commandStrings.push(`draw.path=[${x},${y},${this.START_Z}],[${x+width},${y+height},${this.START_Z}]`);
+      } else {
+        commandStrings.push(`draw.path=[${x+width},${y},${this.START_Z}],[${x},${y+height},${this.START_Z}]`);
+      }
+      sendCommands(commandStrings);
+    }
+
+    draw() {
+      for(var x = 0; x < this.size; x += this.step) {
+        for(var y = 0; y < this.size; y+= this.step) {
+          this.drawTiledLines(x, y, this.step, this.step);
+        }
+      }
+    }
+  }
+
+  class TriangularMesh {
+
+    constructor(size, step) {
+      this.size = size;
+      this.step = step;
+      this.START_Z = 0;
+    }
+
+    drawTriangle(pointA, pointB, pointC) {
+      var commandStrings = [];
+      commandStrings.push(`color.set.html=${getRandomColorInHex()}`);
+      commandStrings.push(`draw.path=[${pointA.x},${pointA.y},${this.START_Z}],[${pointB.x},${pointB.y},${this.START_Z}],[${pointC.x},${pointC.y},${this.START_Z}],[${pointA.x},${pointA.y},${this.START_Z}]`);
+      sendCommands(commandStrings);
+    }
+
+    draw() {
+      var line, dot,
+          odd = false, 
+          lines = [],
+          gap = this.size / this.step;
+
+      for(var y = gap / 2; y <= this.size; y+= gap) {
+        odd = !odd;
+        line = [];
+        for(var x = gap / 4; x <= this.size; x+= gap) {
+          dot = {x: x + (odd ? gap/2 : 0), y: y};
+          line.push({
+            x: x + (Math.random()*.8 - .4) * gap  + (odd ? gap/2 : 0),
+            y: y + (Math.random()*.8 - .4) * gap
+          });
+        }
+        lines.push(line);
+      }
+
+      var dotLine;
+      odd = true;
+
+      for(var y = 0; y < lines.length - 1; y++) {
+        odd = !odd;
+        dotLine = [];
+        for(var i = 0; i < lines[y].length; i++) {
+          dotLine.push(odd ? lines[y][i]   : lines[y+1][i]);
+          dotLine.push(odd ? lines[y+1][i] : lines[y][i]);
+        }
+        for(var i = 0; i < dotLine.length - 2; i++) {
+          this.drawTriangle(dotLine[i], dotLine[i+1], dotLine[i+2]);
+        }
+      }
+    }
+  }
+
+  class JoyDivision {
+
+    constructor(size, step) {
+      this.size = size;
+      this.step = step;
+      this.START_Z = 0;
+    }
+    
+    draw() {
+      var lines = [];
+
+      // Create the lines
+      <!-- for(var i = this.step; i <= this.size - this.step; i += this.step) { -->
+        <!-- var line = []; -->
+        <!-- for(var j = this.step; j <= this.size - this.step; j+= this.step) { -->
+          <!-- var random = Math.random() * 1; -->
+          <!-- var point = {x: j, y: i + random}; -->
+          <!-- line.push(point); -->
+        <!-- }  -->
+        <!-- lines.push(line); -->
+      <!-- } -->
+
+      for(var i = this.step; i <= this.size - this.step; i += this.step) {
+        var line = [];
+        for(var j = this.step; j <= this.size - this.step; j+= this.step) {
+          var distanceToCenter = Math.abs(j - (this.size / 2));
+          var variance = Math.max((this.size / 2) - 3 - distanceToCenter, 0);
+          var random = Math.random() * variance / 2 * 1;
+          var point = {x: j, y: i + random};
+          line.push(point);
+        }
+        lines.push(line);
+      }
+
+      // Do the drawing
+      for(var i = 0; i < lines.length; i++) {
+        var commandStrings = [];
+        commandStrings.push(`color.set.html=${getRandomColorInHex()}`);
+        var draw_path = `draw.path=`;
+        for(var j = 0; j < lines[i].length; j++) {
+          draw_path += `[${lines[i][j].x},${lines[i][j].y},${this.START_Z}],`;
+        }
+        draw_path = draw_path.substring(0, draw_path.length - 1);
+        commandStrings.push(draw_path);
+        sendCommands(commandStrings);
+      }
+
+      <!-- context.quadraticCurveTo(lines[i][j].x, lines[i][j].y, lines[i][j + 1].x, lines[i][j + 1].y); -->
+
+    }
+  }
+
+  class CubicDisarray {
+
+    constructor(size, step) {
+      this.size = size;
+      this.step = step;
+      this.START_Z = 0;
+      this.START_Y = (this.size/2); // we need half size clearance from Y Axis
+    }
+
+    // https://stackoverflow.com/questions/38297082/get-rotated-rectangle-points-from-x-y-width-height-and-rotation
+    getRectFourPoints(x,y, width, height, ang, isDeg = false) {
+      if(isDeg) ang = ang * (Math.PI / 180)
+
+      const points = {first: {x,y}}
+      const sinAng = Math.sin(ang)	
+      const cosAng = Math.cos(ang)
+      
+      let upDiff = sinAng * width
+      let sideDiff = cosAng * width
+      const sec = {x: x + sideDiff, y: y + upDiff}
+      points.second= sec
+      
+      upDiff = cosAng * height
+      sideDiff = sinAng * height
+      points.third = {x: x + sideDiff, y: y - upDiff}
+      
+      const fourth = {x: sec.x + sideDiff, y: sec.y - upDiff}
+      points.fourth = fourth
+      return points
+    }
+
+    rotateMyPoint(x, y, centerx, centery, degrees) {
+      x = x - centerx; y = y - centery;
+      <!-- return rotatePoint(x, y, centerx, centery, degrees); -->
+    }
+
+    Rotate(pointX, pointY, rectWidth, rectHeight, angle) {
+      // convert angle to radians
+      angle = angle * Math.PI / 180.0
+      // calculate center of rectangle
+      var centerX = rectWidth / 2.0;
+      var centerY = rectHeight / 2.0;
+      // get coordinates relative to center
+      var dx = pointX - centerX;
+      var dy = pointY - centerY;
+      // calculate angle and distance
+      var a = Math.atan2(dy, dx);
+      var dist = Math.sqrt(dx * dx + dy * dy);
+      // calculate new angle
+      var a2 = a + angle;
+      // calculate new coordinates
+      var dx2 = Math.cos(a2) * dist;
+      var dy2 = Math.sin(a2) * dist;
+      // return coordinates relative to top left corner
+      return { newX: dx2 + centerX, newY: dy2 + centerY };
+    }
+
+    rotatePoint(x, y, centerx, centery, degrees) {
+        var newx = (x - centerx) * Math.cos(degrees * Math.PI / 180) - (y - centery) * Math.sin(degrees * Math.PI / 180) + centerx;
+        var newy = (x - centerx) * Math.sin(degrees * Math.PI / 180) + (y - centery) * Math.cos(degrees * Math.PI / 180) + centery;
+        return [newx, newy];
+    }
+
+    /**
+     x,y is the center of the square, below are identifiers for the corners of the square...
+     D C
+     A B
+     */
+    drawSquare(x, y, degrees) {
+      var commandStrings = [];
+
+      var width = this.size, height = this.size;
+      <!-- rotatePoint(x, y, x, y, rotateAmt) -->
+      var centerx = x;
+      var centery = y;
+      x = x - (width/2);
+      y = y - (height/2);
+
+      var A = [x,y];
+      var B = [x+width,y];
+      var C = [x+width,y+height];
+      var D = [x,y+height];
+      var points = this.getRectFourPoints(D[0],D[1], width, height, degrees, false);
+
+      C = [Number(points.second.x.toFixed(2)), Number(points.second.y.toFixed(2))];
+      A = [Number(points.third.x.toFixed(2)), Number(points.third.y.toFixed(2))];
+      B = [Number(points.fourth.x.toFixed(2)), Number(points.fourth.y.toFixed(2))];
+
+      <!-- A = this.rotatePoint(A[0], A[1], centerx, centery, degrees); -->
+      <!-- B = this.rotatePoint(B[0], B[1], centerx, centery, degrees); -->
+      <!-- C = this.rotatePoint(C[0], C[1], centerx, centery, degrees); -->
+      <!-- D = this.rotatePoint(D[0], D[1], centerx, centery, degrees); -->
+
+      <!-- A = this.Rotate(A[0], A[1], width, height, degrees); -->
+      <!-- B = this.Rotate(B[0], B[1], width, height, degrees); -->
+      <!-- C = this.Rotate(C[0], C[1], width, height, degrees); -->
+      <!-- D = this.Rotate(D[0], D[1], width, height, degrees); -->
+
+      commandStrings.push(`color.set.html=${getRandomColorInHex()}`);
+
+      /**
+       wow, so the following results "screwy" looking squares, but if you draw line by line, it's fine
+      */
+      <!-- var path=`draw.path=[${A[0]},${A[1]+this.START_Y},${this.START_Z}],` +  -->
+                         <!-- `[${B[0]},${B[1]+this.START_Y},${this.START_Z}],` + -->
+                         <!-- `[${C[0]},${C[1]+this.START_Y},${this.START_Z}],` + -->
+                         <!-- `[${D[0]},${D[1]+this.START_Y},${this.START_Z}],` + -->
+                         <!-- `[${A[0]},${A[1]+this.START_Y},${this.START_Z}]`; -->
+      <!-- commandStrings.push(path); -->
+
+      commandStrings.push(`draw.path=[${A[0]},${A[1]+this.START_Y},${this.START_Z}],[${B[0]},${B[1]+this.START_Y},${this.START_Z}]`);
+      commandStrings.push(`draw.path=[${B[0]},${B[1]+this.START_Y},${this.START_Z}],[${C[0]},${C[1]+this.START_Y},${this.START_Z}]`);
+      commandStrings.push(`draw.path=[${C[0]},${C[1]+this.START_Y},${this.START_Z}],[${D[0]},${D[1]+this.START_Y},${this.START_Z}]`);
+      commandStrings.push(`draw.path=[${D[0]},${D[1]+this.START_Y},${this.START_Z}],[${A[0]},${A[1]+this.START_Y},${this.START_Z}]`);
+
+      sendCommands(commandStrings);
+    }
+
+    draw() {
+      var rotateMultiplier = 3; // NOTE: IF YOU ARE NOT GETTING ENOUGH ROTATION, INCREASE THIS VALUE
+      var x = 0, y = 0;
+      for(var i = 0; i < this.step; i++) {
+        for(var j = 0; j < this.step; j++) {
+
+          x = (j * this.size);
+          y = (i * this.size);
+
+          var plusOrMinus = Math.random() < 0.5 ? -1 : 1;
+          var rotateAmt = i / (this.size*this.size) * Math.PI / 180 * plusOrMinus * Math.random() * rotateMultiplier;
+
+          this.drawSquare(x, y, rotateAmt);
+        }
+      }
+    }
+
+  }
+
+  class UnDeuxTrois {
+
+    constructor(size, step) {
+      this.size = size;
+      this.step = step;
+      this.START_Z = 0;
+    }
+
+    // https://shiffman.net/general/2011/02/03/rotate-a-vector-processing-js/
+    rotate2D(v, theta) {
+      var xTemp = v.x;
+      v.x = v.x*Math.cos(theta) - v.y*Math.sin(theta);
+      v.y = xTemp*Math.sin(theta) + v.y*Math.cos(theta);
+      return v;
+    }
+
+    drawLines(x, y, width, height, positions) {
+      <!-- context.translate(x + width/2, y + height/2); -->
+      <!-- context.rotate(Math.random() * 5); -->
+      <!-- context.translate(-width/2, -height/2); -->
+      
+      var rotAng = Math.random() * (Math.random() < 0.5 ? -1 : 1);
+      const v = {x,y}
+      v.x = 0;
+      v.y = height;
+      var rv = this.rotate2D(v, rotAng);
+      var dx = v.x - rv.x;
+      var dy = v.y - rv.y;
+      <!-- log(`dx: ${dx}, dy: ${dy}`); -->
+
+      for(var i = 0; i < positions.length; i++) {
+        var commandStrings = [];
+
+        var sx = x + positions[i] * width;
+        var sy = y;
+        var ex = sx - dx;
+        var ey = sy + height - dy;
+        sx = sx - dx;
+        sy = sy - dy;
+
+        commandStrings.push(`color.set.html=${getRandomColorInHex()}`);
+        <!-- commandStrings.push(`bursh.move.to=${x + width/2},${y + height/2},${this.START_Z}`); -->
+        <!-- commandStrings.push(`draw.path=[${sx},${sy},${this.START_Z}],[${ex},${ey},${this.START_Z}]`); -->
+        commandStrings.push(`draw.path=[${sx},${sy},${this.START_Z}],[${sx+rv.x},${sy+rv.y},${this.START_Z}]`);
+        <!-- log(commandStrings); -->
+        sendCommands(commandStrings);
+      }
+
+    }
+    
+    draw() {
+      var aThirdOfHeight = this.size/3;
+      for(var y = this.step; y < this.size - this.step; y += this.step) {
+        for(var x = this.step; x < this.size - this.step; x+= this.step) {
+          if(y < aThirdOfHeight) {
+            this.drawLines(x, y, this.step, this.step, [0.5]);   
+          } else if(y < aThirdOfHeight * 2) {
+            this.drawLines(x, y, this.step, this.step, [0.4, 0.6]);      
+          } else {
+            this.drawLines(x, y, this.step, this.step, [0.25, 0.5, 0.75]);
+          }
+        }
+      }
+    }
+
+  }
+
+  class HypnoticSquares {
+
+    constructor(size, step) {
+      this.size = size;
+      this.numOfSquares = step; // a multiplier on the total number of squares, make big = more squares.
+      this.START_Z = 0;
+
+      this.finalSize = 0;
+      this.startSteps = 0;
+      this.offset = 2;
+      this.tileStep = ((this.size - this.offset) * 2) / this.numOfSquares;
+      this.startSize = this.tileStep;
+      this.directions = [-1, 0, 1];
+    }
+
+    drawRectangle(x, y, width, height, color) {
+      var commandStrings = [];
+      commandStrings.push(`color.set.html=${color}`);
+      commandStrings.push(`draw.path=[${x},${y},${this.START_Z}],[${x+width},${y},${this.START_Z}],[${x+width},${y+height},${this.START_Z}],[${x},${y+height},${this.START_Z}],[${x},${y},${this.START_Z}]`);
+      sendCommands(commandStrings);
+    }
+
+    drawRecrusive(x, y, width, height, xMovement, yMovement, steps) {
+      this.drawRectangle(x, y, width, height, getRandomColorInHex());
+
+      if(steps >= 0) {
+        var newSize = (this.startSize) * (steps / this.startSteps) + this.finalSize;
+        console.log(`width:${width}, newSize: ${newSize}`);
+        var newX = x + (width - newSize) / 2;
+        var newY = y + (height - newSize) / 2;
+        newX = newX - ((x - newX) / (steps + 2)) * xMovement;
+        newY = newY - ((y - newY) / (steps + 2)) * yMovement;
+        this.drawRecrusive(newX, newY, newSize, newSize, xMovement, yMovement, steps - 1);
+      }
+
+    }
+    
+    draw() {
+      for( var x = this.offset; x < this.size - this.offset; x += this.tileStep) {
+        for( var y = this.offset; y < this.size - this.offset; y += this.tileStep) {
+          this.startSteps = 2 + Math.ceil(Math.random() * 3);
+          var xDirection = this.directions[Math.floor(Math.random() * this.directions.length)];
+          var yDirection = this.directions[Math.floor(Math.random() * this.directions.length)];
+          this.drawRecrusive(x, y, this.startSize, this.startSize, xDirection, yDirection, this.startSteps - 1);
+        }
+      }
+    }
+  }
+
+
+
+
+
+<!--
+"Light","Icing","OilPaint","Ink","ThickPaint","WetPaint","Marker","TaperedMarker","PinchedMarker","Highlighter","Flat","TaperedFlat",
+"PinchedFlat","SoftHighlighter","Fire","Embers","Smoke","Snow","Rainbow","Stars","VelvetInk","Waveform","Splatter","DuctTape","Paper",
+"CoarseBristles","DrWigglez","Electricity","Streamers","Hypercolor","Bubbles","NeonPulse","CelVinyl","HyperGrid","LightWire","ChromaticWave",
+"Dots","Petal","Toon","Wire","Spikes","Lofted","Disco","Comet","ShinyHull","MatteHull","UnlitHull","Diamond","Leaves","DotMarker","Plasma","Taffy","Flat"
+ -->
+
+  sendCommands(["brush.type=Light"]);
+  <!-- sendCommands(["brush.type=Icing"]); -->
+  <!-- sendCommands(["brush.type=NeonPulse"]); -->
+  <!-- sendCommands(["brush.type=Electricity"]); -->
+    
+ //`color.set.html=${getRandomColorInHex()}`,
+
+  function drawPietMondrian() {
+    clearSceneAndMoveTo(-4,10,10);
+    inst = new PietMondrian(10, 1);
+    inst.draw();
+  }
+
+  function drawTiledLines() {
+    clearSceneAndMoveTo(-4,10,10);
+    inst = new TiledLines(10, 0.5);
+    inst.draw();
+  }
+
+  function drawTriangularMesh() {
+    clearSceneAndMoveTo(-4,10,10);
+    inst = new TriangularMesh(10, 16);
+    inst.draw();
+  }
+
+  function drawJoyDivision() {
+    clearSceneAndMoveTo(-4,10,10);
+    inst = new JoyDivision(10, 0.25);
+    inst.draw();
+  }
+
+  function drawCubicDisarray() {
+    clearSceneAndMoveTo(-4,10,10);
+    inst = new CubicDisarray(1, 8); // ALSO SEE rotateMultiplier
+    inst.draw();
+  }
+
+  function drawUnDeuxTrois() {
+    clearSceneAndMoveTo(-4,10,10);
+    inst = new UnDeuxTrois(6, 0.5);
+    inst.draw();
+  }
+
+  function drawHypnoticSquares() {
+    clearSceneAndMoveTo(-4,10,10);
+    inst = new HypnoticSquares(10, 10); // 10,16=6x6 squares
+    inst.draw();
+  }
+
+
+
+  /**
+
+   */
+
+</script>
+</body></html>

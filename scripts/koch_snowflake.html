@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8"><meta charset="UTF-8">
+<style>
+  div.settings {
+      display:grid;
+      grid-template-columns: max-content max-content;
+      grid-gap:5px;
+  }
+  div.settings label       { text-align:left; }
+  div.settings label:after { content: ""; }
+</style>
+</head>
+<body>
+<div class="settings">
+  <label>Brush type</label> <select id="brush.type" name="brush.type"></select>
+  <label>Brush size</label> <input id="brush.size" value=".025">
+  <label>Brush color</label> <input id="brush.color" value="LightBlue">
+  <label>Iterations</label> <input id="iterations" value="1">
+</div>
+<br />
+<button onclick="setBrushOptions();">Set Brush Options</button>
+<br /><br />
+<br /><br />
+<button onclick="kochSnowflake();">Draw Koch's Snowflake</button>
+<button onclick="fibonacciFractal();">Draw Fibonacci Fractal</button>
+<button onclick="drawCardioid();">Draw Cardioid</button>
+<br /><br />
+<button onclick="drawCurve();">Draw Curve</button>
+<button onclick="drawLorenzAttractor();">Draw Lorenz Attractor</button>
+<button onclick="drawConwayGameOfLife();">Draw Conway's Game of Life</button>
+<br /><br />
+<br /><br />
+<br /><br />
+<br /><br />
+<label><button onclick="clearScene();">Clear Current Scene</button></label> and move user to Z 
+<input id="user.Z" value="5">
+<br /><br />
+<textarea id="results" cols="80" rows="20"></textarea>
+<br /><br />
+<p><em>Thanks to <a href="https://twitter.com/Shoseki/">Shoseki</a> for the script</em></p>
+<script>
+
+    var brushes = ["Light","Icing","OilPaint","Ink","ThickPaint","WetPaint","Marker","TaperedMarker","PinchedMarker","Highlighter","Flat","TaperedFlat","PinchedFlat","SoftHighlighter","Fire","Embers","Smoke","Snow","Rainbow","Stars","VelvetInk","Waveform","Splatter","DuctTape","Paper","CoarseBristles","DrWigglez","Electricity","Streamers","Hypercolor","Bubbles","NeonPulse","CelVinyl","HyperGrid","LightWire","ChromaticWave","Dots","Petal","Toon","Wire","Spikes","Lofted","Disco","Comet","ShinyHull","MatteHull","UnlitHull","Diamond","Leaves","DotMarker","Plasma","Taffy","Flat"];
+    var menu = document.getElementById("brush.type");
+    for (var brush of brushes) {
+        var option = document.createElement("option");
+        option.text = brush;
+        option.name = brush;
+        menu.add(option);
+    }
+    
+    var setBrushOptions = function() {
+      sendCommands([
+          'color.set.html=' + document.getElementById("brush.color").value,
+          'brush.size.set=' + document.getElementById("brush.size").value,
+          'brush.type=' + document.getElementById("brush.type").value
+      ]);
+    }
+
+    var clearScene = function() {
+      sendCommands(["new"]);
+      sendCommands(["brush.move.to=0,0,0","brush.look.up"]);
+      sendCommands(["user.move.to=0,0," + document.getElementById("user.Z").value]);
+    }
+
+    var kochSnowflake = function() {
+
+      sendCommands(["brush.move.to=0,10,0"]);
+      
+      var iterations = parseInt(document.getElementById('iterations').value);
+
+      // Original
+      var commands = [
+          generateCommand('brush.draw', 10.0),
+          generateCommand('brush.turn.y', -120),
+          generateCommand('brush.draw', 10.0),
+          generateCommand('brush.turn.y', -120),
+          generateCommand('brush.draw', 10.0)
+      ];
+
+      for (var iterationCounter = 0; iterationCounter < iterations; iterationCounter ++) {
+          commands = applyTransformation(commands);
+      }
+
+      var commandStrings = generateStringCommands(commands);
+
+      sendCommands(commandStrings);
+    };
+
+    var applyTransformation = function(commands) { 
+
+        var newCommands = [];
+        for (var commandsCounter = 0; commandsCounter < commands.length; commandsCounter ++) {
+            var command = commands[commandsCounter];
+            if (command.command == 'brush.draw') {
+                // Replace
+                var tempCommands = generateTransformationCommands(command.parameter);
+                for (var tempCommandsCounter = 0; tempCommandsCounter < tempCommands.length; tempCommandsCounter ++) {
+                    newCommands.push(tempCommands[tempCommandsCounter]);    
+                }
+            }
+            else {
+                newCommands.push(command);
+            }
+        }
+
+        return newCommands;
+    };
+
+    // d(l) => d(l/3), tl(30), d(1/3), tr(90), d(1/3), tl(30), d(1/3)
+    var generateTransformationCommands = function(length) {
+        return [
+            generateCommand('brush.draw', length/3),
+            generateCommand('brush.turn.y', 60),
+            generateCommand('brush.draw', length/3),
+            generateCommand('brush.turn.y', -120),
+            generateCommand('brush.draw', length/3),
+            generateCommand('brush.turn.y', 60),
+            generateCommand('brush.draw', length/3)
+        ];
+    };
+
+    var generateCommand = function(commandString, parameter) {
+        return {
+          'command' : commandString,
+          'parameter' : parameter
+        };
+    };
+
+    var generateStringCommands = function(commands) {
+        var commandStrings = [];
+        for (var i = 0; i < commands.length; i++) {
+            commandStrings.push([commands[i].command, commands[i].parameter].join('='));
+        }
+        return commandStrings;
+    }
+
+    function log(message) {
+        var textarea = document.getElementById("results");
+        textarea.value += `${message}\n`;
+        textarea.scrollTop = textarea.scrollHeight; // Scroll to the end
+    }
+
+    var sendCommands = function(commandStrings) {
+        var xmlHttp = new XMLHttpRequest();
+        var url = 'http://localhost:40074/api/v1?' + commandStrings.join('&');
+        log(commandStrings.join('\n'));
+        xmlHttp.open('GET', url, false);
+        try {
+          xmlHttp.send();
+        }
+        catch(err) {
+        }
+    }
+
+    /**
+     * draw Down and Counter Clockwise, down, right, up, left, end up where you started
+     */
+    var drawDCC = function(x, y, n2) {
+      var commandStrings = [];
+      sendCommands(["brush.move.to=" + x + "," + y + ",10", 'brush.look.down']);
+      commandStrings.push("brush.draw=" + n2)
+      commandStrings.push("brush.look.right")
+      commandStrings.push("brush.draw=" + n2)
+      commandStrings.push("brush.look.up")
+      commandStrings.push("brush.draw=" + n2)
+      commandStrings.push("brush.look.left")
+      commandStrings.push("brush.draw=" + n2)
+      //should be back where you started
+      sendCommands(commandStrings);
+    }
+
+    var fibonacciFractal = function() {
+      
+      const number = parseInt(document.getElementById('iterations').value);;
+
+      let x=0, y=20, n1 = 0.1, n2 = 0.2, nextTerm;
+      <!-- sendCommands(["brush.move.to=" + x + "," + y + ",10", 'brush.look.down']); -->
+
+      for (let i = 0; i <= number; i++) {
+
+        drawDCC(x, y, n2);
+        
+        <!-- alert('pause'); -->
+         
+         // https://www.youtube.com/watch?v=J_sjsgDTBJU
+        // L, D, R, U is the order of squares
+        // we are positioning the cursor / brush at top left corner, for the next draw
+        if(i % 4 == 0) { // L
+          y -= n2
+        } else if (i % 4 == 1) { // D
+          x += n2; y += n1;
+        } else if (i % 4 == 2) { // R
+          x -= n1; y += n1 + n2;
+        } else { // U
+          x -= n1 + n2;
+        }
+
+        nextTerm = n1 + n2;
+        n1 = n2;
+        n2 = nextTerm;
+      }
+    }
+    
+    /**
+     * 
+https://qdmana.com/2021/12/202112112141171714.html
+     */
+    var drawCardioid = function() {
+      sendCommands(["brush.move.to=0,0,0"]);
+      let r = 3, start = 0;
+      let x = 0, y = 0, points = [];
+      const acceleration = 0.2, max = 20;
+
+      let startY = 13;
+      let x0 = 0, y0 = 0;
+
+      var counter = 0;
+      while (start <= max ) { //&& counter++ <=64
+        const cal = 2 * start;
+        x =          (r * (2 * Math.cos(start) - Math.cos(cal)));
+        y = startY + (r * (2 * Math.sin(start) - Math.sin(cal)));
+
+        /**
+         * SIMPLY DRAW DOTS
+         */
+        <!-- sendCommands(["brush.move.to=" + x + "," + y + ",0", "brush.draw=0.2"]); -->
+        
+        /**
+         * CONNECT CURRENT DOTS TO PREVIOUS DOTS BY DRAWING A LINE BETWEEN THEM
+         */
+        if(start > 0) {
+          sendCommands(["draw.path=[" + x + "," + y + ",0],[" + (x0) + "," + (y0) + ",0]"]);
+          sendCommands(["draw.path=[" + x + "," + y + ",0],[0, " + startY + ",0]"]);
+          <!-- alert(); -->
+        }
+
+        x0 = x; y0 = y;
+        start = start + acceleration;
+      }
+    }
+
+    /**
+     *
+http://www.sineofthetimes.org/the-art-of-parametric-equations-2/     
+     */
+    var drawCurve = function() {
+
+      let r = 5, start = 0;
+      let x = 0, y = 0, points = [];
+      const acceleration = 0.05, max = 10;
+
+      let startY = 13;
+      let x0 = 0, y0 = 0;
+
+      <!-- let A = 6, B=6, C=10; // https://images.app.goo.gl/uDWRWp23jApi1LWA8 -->
+      let A = 1, B=6, C=14;
+
+      while (start <= max) {
+
+        u = start;
+        
+        x =          (r * (Math.cos(A * u) + (Math.cos(B * u)/2) + (Math.sin(C * u)/3)));
+        y = startY + (r * (Math.sin(A * u) + (Math.sin(B * u)/2) + (Math.cos(C * u)/3)));
+
+        /**
+         * SIMPLY DRAW DOTS
+         */
+        <!-- sendCommands(['brush.move.to=' + x + "," + y + ",0",'brush.draw=0.1']); -->
+
+        /**
+         * CONNECT CURRENT DOTS TO PREVIOUS DOTS BY DRAWING A LINE BETWEEN THEM
+         */
+        if(start > 0) {
+          sendCommands(["draw.path=[" + x + "," + y + ",0],[" + (x0) + "," + (y0) + ",0]"]);
+          // DRAW A LINE FROM POON CURVE TO "CENTER" OF GRAPH
+          <!-- sendCommands(["draw.path=[" + x + "," + y + ",0],[0, " + startY + ",0]"]); -->
+          <!-- alert(); -->
+        }
+
+        x0 = x; y0 = y;
+        start = start + acceleration;
+      }
+    }
+    
+    /* 
+     Lorenz Attractor
+     https://editor.p5js.org/codingtrain/sketches/pwr_7FUUq
+     */
+    var drawLorenzAttractor = function() {
+
+      /*
+      * Basic Lorenz Attractor code 
+      */
+      x = 0.1; 
+      y = 0.0;
+      z = 0.0; 
+      a = 10.0;
+      b = 28.0;
+      c = 8.0 / 3.0;
+      t = 0.01; 
+      lorenzIterationCount = 3000;
+
+      let x0 = 0, y0 = 0, z0 = 0;
+      let startY = 13; reduce=0.50;
+
+      //Iterate and update x,y and z locations based upon the Lorenz equations
+      for (var i = 0; i < lorenzIterationCount; i++ ){
+        xt = x + t * a * (y - x);
+        yt = y + t * (x * (b - z) - y);
+        zt = z + t * (x * y - c * z);
+        x = xt;
+        y = yt;
+        z = zt;
+        if (isNaN(x) || isNaN(y)) {
+          log("NaN");
+          break;
+        }
+        if(i > 0) {
+          <!-- log("draw.path=[" + x + "," + y + ",0],[" + (x0) + "," + (y0) + ",0]"); -->
+          drawingPointX = (reduce * x),drawingPointY = startY + (reduce * y), drawingPointZ = (reduce * z);
+          drawingPointX0 = (reduce * x0),drawingPointY0 = startY + (reduce * y0), drawingPointZ0 = (reduce * z0);
+          sendCommands(["draw.path=[" + drawingPointX + "," + drawingPointY + "," + drawingPointZ + "],[" + drawingPointX0 + "," + drawingPointY0 + "," + drawingPointZ0 + "]"]);
+        }
+
+        x0 = x; y0 = y; z0=z;
+
+      }
+    }
+
+
+    /* 
+********************************************************************************
+CONWAY'S GAME OF LIFE
+SOURCE: https://medium.com/codesphere-cloud/building-conways-game-of-life-in-javascript-ab07dc7c1950
+********************************************************************************
+     */
+    let tableArr = []; //2D array of grid. 1 - Alive, 0 - Dead
+    gridLn = 10; // Grid is size gridLn x gridLn
+    let state = 1; // 0 = Setup, 1 = Active
+    conwayStartX = 2;
+    conwayStartY = 20;
+
+    /**
+     Return number of its eight neighbours, which are the cells that are 
+     horizontally, vertically, or diagonally adjacent
+     */
+    function checkNeighbors(row, col) {
+      let count = 0;
+      
+      for (let i = -1; i < 2; i++) { //This checks the row above and row below
+        if (col + i >= 0 && col + i < gridLn ) { // Check for valid column
+          if (row > 0 && tableArr[row - 1][col + i] == 1) {
+            count++;
+          }
+          if (row < gridLn - 1 && tableArr[row + 1][col + i] == 1) {
+            count++;
+          }
+        }
+      }
+      
+      if (col - 1 >= 0 && tableArr[row][col - 1] == 1) { // Check left cell
+        count++;
+      }
+      if (col + 1 < gridLn && tableArr[row][col + 1] == 1) { // Check right cell
+        count++;
+      }
+
+      return count;
+    }
+    
+    function printGrid() {
+      let pattern = "";
+      tableArr.forEach((rowArr, row) => {
+        rowArr.forEach((colVal, col) => {
+          pattern += colVal;
+        });
+        pattern += "\n";
+      });
+      log(pattern);
+    }
+
+    /**
+      "Computes" the next tableArr of who lives and dies.
+      Marks in red the current cells up for deletion.
+     */
+    function computeConwayBoard() {
+      var commandStrings = [];
+      commandStrings.push("color.set.html=Red");
+      if (state == 1) {
+        // Apply rules
+        let newTable = []; // Upcoming grid
+        tableArr.forEach((rowArr, row) => {
+          let newRow = [];
+          rowArr.forEach((colVal, col) => {
+            let cellVal = colVal;
+            let nCount = checkNeighbors(row, col);
+            if (cellVal == 1 && nCount < 2) { // If live and <2 live neighbors
+              cellVal = 0;
+              commandStrings.push("brush.move.to=" + (conwayStartX + col) + "," + (conwayStartY - row) + ",20&draw.text=*");
+            } else if (cellVal == 1 && nCount > 3) { // If live and >3 live neighbors
+              cellVal = 0;
+              commandStrings.push("brush.move.to=" + (conwayStartX + col) + "," + (conwayStartY - row) + ",20&draw.text=*");
+              <!-- commandStrings.push("brush.move.to=" + (conwayStartX + row) + "," + (conwayStartY + col) + ",20&draw.text=*"); -->
+            } else if (cellVal == 0 && nCount == 3) { // If dead and 3 live neighbors
+              cellVal = 1;
+            }
+
+            newRow.push(cellVal);
+          });
+          newTable.push(newRow);
+        });
+        tableArr = newTable; // Update the grid
+        sendCommands(commandStrings);
+      }
+    }
+
+    function renderConwayBoard() {
+      var commandStrings = [];
+      commandStrings.push("color.set.html=White");
+      tableArr.forEach((rowArr, row) => {
+        rowArr.forEach((colVal, col) => {
+          <!-- let color = colVal == 1 ? "White" : "Black"; // Black if live, transparent if dead -->
+          <!-- commandStrings.push("brush.move.to=" + (conwayStartX + row) + "," + (conwayStartY + col) + ",20&color.set.html=" + color + "&brush.draw=0.2"); -->
+          if(colVal == 1) {
+              commandStrings.push("brush.move.to=" + (conwayStartX + col) + "," + (conwayStartY - row) + ",20&draw.text=*");
+            <!-- commandStrings.push("brush.move.to=" + (conwayStartX + row) + "," + (conwayStartY + col) + ",20&draw.text=*"); -->
+          }
+        });
+      });
+      
+      sendCommands(commandStrings);
+    }
+
+    // INITIAL STATE OF CONWAY BOARD
+    for (let r = 0; r < gridLn; r++) {
+      let rowArr = [];
+      for (let c = 0; c < gridLn; c++) {
+        rowArr.push(Math.round(Math.random())); // randomly generate 0 or 1
+      }
+      tableArr.push(rowArr);
+    }
+      
+
+    /* 
+     
+     */
+    var drawConwayGameOfLife = function() {
+      for (let r = 0; r < 20; r++) {
+        sendCommands(["new"]);
+        renderConwayBoard();
+        <!-- alert(); -->
+        computeConwayBoard();
+      }
+    }
+    /* 
+********************************************************************************
+CONWAY'S GAME OF LIFE
+********************************************************************************
+     */
+
+    /**
+curl -v "http://localhost:40074/api/v1?new&user.move.to=0,0,0&brush.look.up"
+curl -v "http://localhost:40074/api/v1?user.move.to=0,0,30"
+curl -v "http://localhost:40074/api/v1?draw.text=a"
+curl -v "http://localhost:40074/api/v1?brush.move.to=10,5,20&color.set.html=White&draw.text=%26"
+
+
+     */
+
+</script>
+
+
+</body></html>
