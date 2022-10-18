@@ -23,7 +23,7 @@
 <button id="runButton" onclick="Run();">Run</button>
 <br><br>
 <button onclick="sendCommands([['strokes.join', `0, ${-strokeCount}`]]);">Join last set of strokes</button>
-<button onclick="sendCommands([['new'], ['brush.home']]);">Clear Current Scene</button>
+<button onclick="sendCommands([['new'], ['brush.home'], ['user.move.to=2.5,0,5']]);">Clear Current Scene</button>
 
 <br><br>
 <textarea id="results" cols="80" rows="10"></textarea>
@@ -45,6 +45,43 @@
     var brushes = ["OilPaint","Ink","ThickPaint","WetPaint","Marker","TaperedMarker","PinchedMarker","Highlighter","Flat","TaperedFlat","PinchedFlat","SoftHighlighter","Light","Fire","Embers","Smoke","Snow","Rainbow","Stars","VelvetInk","Waveform","Splatter","DuctTape","Paper","CoarseBristles","DrWigglez","Electricity","Streamers","Hypercolor","Bubbles","NeonPulse","CelVinyl","HyperGrid","LightWire","ChromaticWave","Dots","Petal","Icing","Toon","Wire","Spikes","Lofted","Disco","Comet","ShinyHull","MatteHull","UnlitHull","Diamond","Leaves","DotMarker","Plasma","Taffy","Flat"];
 
     var presets = {
+        'penrose_tiles': {
+            axiom: '[X]++[X]++[X]++[X]++[X]',
+            rules: [
+                'W -> YF++ZF----XF[-YF----WF]++',
+                'X -> +YF--ZF[---WF--XF]+',
+                'Y -> -WF++XF[+++YF++ZF]-',
+                'Z -> --YF++++WF[+ZF++++XF]--XF',
+            ],
+            angle: 36,
+            iterations: 2,
+        },
+        'bourke_bush': {
+            axiom: 'F',
+            rules: [
+                'F -> FF+[+F-F-F]-[-F+F+F]',
+            ],
+            angle: 22.5,
+            iterations: 1,
+        },
+        'barnsley_fern': {
+            axiom: 'X',
+            rules: [
+                'X -> F+[[X]-X]-F[-FX]+X',
+                'F -> FF',
+            ],
+            angle: 25,
+            iterations: 3,
+        },
+        'sierpinski_triangle': {
+            axiom: 'F-G-G',
+            rules: [
+                'F -> F-G+F+G-F',
+                'G -> GG',
+            ],
+            angle: 120,
+            iterations: 2,
+        },
         'tree': {
             axiom: 'BBBBBA',
             rules: [
@@ -67,7 +104,7 @@
     };
 
     populateSelect('brush.type',  brushes, "Icing");
-    populateSelect('presets', Object.keys(presets), "Snowflake");
+    populateSelect('presets', Object.keys(presets), "snowflake");
 
     var strokeCount = 0;
 
@@ -85,22 +122,33 @@
         document.getElementById('iterations').value = preset.iterations;
     }
 
-    function sendCommands(commands) {
-        var xhr = new XMLHttpRequest();
-        var url = 'http://localhost:40074/api/v1';
-        <!-- var url = '/api/v1'; -->
-        xhr.open('POST', url);
-        xhr.onload = () => log('<' + xhr.responseText + '>');
+    var sendCommands = function(commands) {
         var commandData = [];
         for (var command of commands) {
             var cmd = command[0];
             if (cmd==="brush.draw") strokeCount++;
-            var param = command[1]===undefined ? '' : command[1];
-            var pair = `${cmd}=${param}`;
+
+            var pair = "";
+            if (command[1]===undefined) {
+              pair = command[0];
+            } else {
+              var param = command[1];
+              pair = `${cmd}=${param}`;
+            }
             commandData.push(pair)
-            log(pair);
         }
-        xhr.send(commandData.join("&"));
+
+        var xmlHttp = new XMLHttpRequest();
+        var url = 'http://localhost:40074/api/v1?' + commandData.join('&');
+        log(commandData.join('\n'));
+        xmlHttp.open('GET', encodeURI(url), false);
+        try {
+          xmlHttp.send();
+        }
+        catch(err) {
+        }
+
+
     }
 
     function log(message) {
