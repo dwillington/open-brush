@@ -1,7 +1,13 @@
 import requests
 import random
+import socket
 
 ob_host = "127.0.0.1"
+
+def initHost():
+    hostname = socket.gethostname()
+    if(hostname == "centos7.linuxvmimages.local"):
+      self.ob_host="10.0.2.2"
 
 def callUrl(url):
   try:
@@ -24,3 +30,6 @@ def drawLineOB(p0, p1, scaler=100, generateRandomColor=False):
     randomColor = format(random.randint(0,16777215),'x')
     sendCommands([f"color.set.html={randomColor}"])
   sendCommands([f"draw.path=[{sx},{sy},0],[{fx},{fy},0]"]);
+
+def rgb_to_hex(r, g, b):
+  return ('{:X}{:X}{:X}').format(r, g, b)
