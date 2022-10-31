@@ -24,7 +24,7 @@ import ob_helper
 # getDrawPathCoordinates
 def getDPC(point):
   SCALER=1000
-  Y_ADJUST=10
+  Y_ADJUST=11
   return f"{point.x/SCALER},{(point.y/SCALER)+Y_ADJUST},{point.z/SCALER}"
 
 def main():
@@ -46,7 +46,7 @@ def main():
     S_mm_t = 2 * CF.R_mm * math.sin(t4_rad)     # Side Length   
     S_mm = D.Decimal( str(S_mm_t) )
 
-    H_mm_t = math.cos(t4_rad) * CF.R_mm           # Height of triangle
+    H_mm_t = math.cos(t4_rad) * CF.R_mm         # Height of triangle
     H_mm = D.Decimal( str(H_mm_t) )
 
     Cx_mm_t = CF.R_mm * math.cos(t2_rad)
@@ -207,11 +207,11 @@ def main():
     gs.Add_Face( b, j, c )
 
     # Bottom faces
-    # gs.Add_Face( l, k, j )
-    # gs.Add_Face( l, j, i )
-    # gs.Add_Face( l, i, h )
-    # gs.Add_Face( l, h, g )
-    # gs.Add_Face( l, g, k )
+    gs.Add_Face( l, k, j )
+    gs.Add_Face( l, j, i )
+    gs.Add_Face( l, i, h )
+    gs.Add_Face( l, h, g )
+    gs.Add_Face( l, g, k )
 
     #---------------------------------
     # Calculations
@@ -236,7 +236,7 @@ def main():
       ob_helper.ob_host="10.0.2.2"
     ob_helper.sendCommands(["new"])
     ob_helper.sendCommands(["brush.move.to=0,0,0","brush.look.up"])
-    ob_helper.sendCommands(["user.move.to=-5,10,20"])
+    ob_helper.sendCommands(["user.move.to=0,8,20"])
 
     #---------------------------------
     # Print Results
@@ -244,16 +244,12 @@ def main():
     print(" *     Points                                             *")
     print("/**********************************************************/")
 
-    draw_path=f"draw.path="
     for p in sorted(gs.Point_Hash.keys()):
         # print("x: ", p.x, ", y: ", p.y, ", z: ", p.z)
-        draw_path+=f"[{getDPC(p)}],"
-        # print p.Get_Cartesian_Coordinates().desc
-
-    # ob_helper.sendCommands([f"{draw_path}"])
+        # print p.Get_Cartesian_Coordinates()
 
 
-    print("\n\n/**********************************************************/")
+    print("/**********************************************************/")
     print(" *     Edges                                              *")
     print("/**********************************************************/")
 
@@ -261,17 +257,18 @@ def main():
         ob_helper.sendCommands([f"draw.path=[{getDPC(e.x1)}],[{getDPC(e.x2)}]"])
         # print(e.Get_Edge_Coordinates())
 
-    print("\n\n/**********************************************************/")
+    exit()
+
+
+    print("/**********************************************************/")
     print(" *     Hubs                                              *")
     print("/**********************************************************/")
-
-    exit()
 
     for h in gs.Point_Hash.keys():
         h.Print_Edges()
 
 
-    print("\n\n/**********************************************************/")
+    print("/**********************************************************/")
     print(" *     Summary                                            *")
     print("/**********************************************************/")
 
