@@ -1,0 +1,9 @@
+
+--This line, and those below, will be ignored--
+
+AM   IcoFace.py
+AM   Coordinates.py
+AM   geo.py
+AM   GeoSphere.py
+AM   Edge.py
+AM   config.py
