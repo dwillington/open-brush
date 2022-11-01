@@ -27,7 +27,7 @@ def getDPC(point):
   Y_ADJUST=11
   return f"{point.x/SCALER},{(point.y/SCALER)+Y_ADJUST},{point.z/SCALER}"
 
-def main():
+def geodesicDome():
     print("/**********************************************************/")
     print(" *     Geodesic Dome Calculator - PyDome                  *")
     print(" *     Version 0.2                                        *")
@@ -231,20 +231,13 @@ def main():
     # For each point find the edges which meet there
     gs.Hub_List_From_Edges()
 
-    hostname = socket.gethostname()
-    if(hostname == "centos7.linuxvmimages.local" or hostname == "osboxes.org"):
-      ob_helper.ob_host="10.0.2.2"
-    ob_helper.sendCommands(["new"])
-    ob_helper.sendCommands(["brush.move.to=0,0,0","brush.look.up"])
-    ob_helper.sendCommands(["user.move.to=0,8,20"])
-
     #---------------------------------
     # Print Results
     print("/**********************************************************/")
     print(" *     Points                                             *")
     print("/**********************************************************/")
 
-    for p in sorted(gs.Point_Hash.keys()):
+    # for p in sorted(gs.Point_Hash.keys()):
         # print("x: ", p.x, ", y: ", p.y, ", z: ", p.z)
         # print p.Get_Cartesian_Coordinates()
 
@@ -311,6 +304,18 @@ def main():
     # Create custom edges text
     for e in gs.Edge_List:
         print(e.Get_CATIA_Desc())
+
+
+def main():
+
+    hostname = socket.gethostname()
+    if(hostname == "centos7.linuxvmimages.local" or hostname == "osboxes.org"):
+      ob_helper.ob_host="10.0.2.2"
+    ob_helper.sendCommands(["new"])
+    ob_helper.sendCommands(["brush.move.to=0,0,0","brush.look.up"])
+    ob_helper.sendCommands(["user.move.to=0,5,20"])
+
+    geodesicDome()
 
 
 
