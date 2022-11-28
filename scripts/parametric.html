@@ -45,14 +45,25 @@
         <button onclick="sendCommands(['showfolder.exports']);">Show Exports Folder</button>
         <br><br>
         <button onclick="sendCommands(['new']);">Clear Current Scene</button>
+        <br /><br />
+        <textarea id="results" cols="80" rows="20"></textarea>
+        <br /><br />
+
     </form>
 </div>
 
 <script>
 
+    function log(message) {
+        var textarea = document.getElementById("results");
+        textarea.value += `${message}\n`;
+        textarea.scrollTop = textarea.scrollHeight; // Scroll to the end
+    }
+
     function sendCommands(commands) {
         var xmlHttp = new XMLHttpRequest();
         var url = 'http://localhost:40074/api/v1?' + commands.join('&');
+        log(commands.join('\n'));
         xmlHttp.open('GET', url, false);
         try {
           xmlHttp.send();
