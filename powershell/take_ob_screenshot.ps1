@@ -49,11 +49,11 @@ Show-Process -Process $OpenBrush
 # Write-Output $Width
 # Write-Output $Height
 
-$Width = 1920;
-$Height = 1080;
+# $Width = 1920;
+# $Height = 1080;
 
-# $Width = 2736;
-# $Height = 1834;
+$Width = 2736;
+$Height = 1834;
 
 $bounds = [Drawing.Rectangle]::FromLTRB(0, 0, $Width, $Height)
 

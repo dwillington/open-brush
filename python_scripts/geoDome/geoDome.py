@@ -8,7 +8,8 @@ import ob_helper
 def getDPC(x,y,z):
   SCALER=10
   Y_ADJUST=11
-  return f"{x*SCALER},{(y*SCALER)+Y_ADJUST},{z*SCALER}"
+  Z_ADJUST=-20
+  return f"{x*SCALER},{(y*SCALER)+Y_ADJUST},{(z*SCALER)+Z_ADJUST}"
 
 def fromDomeOutput():
     draw_path = ""
@@ -52,7 +53,7 @@ def main():
 
     hostname = socket.gethostname()
     if(hostname == "centos7.linuxvmimages.local" or hostname == "osboxes.org"):
-      ob_helper.ob_host="10.0.2.2"
+      ob_helper.ob_host="192.168.86.52"
     ob_helper.sendCommands(["new"])
     ob_helper.sendCommands(["brush.move.to=0,0,0","brush.look.up"])
     ob_helper.sendCommands(["user.move.to=0,4,20"])

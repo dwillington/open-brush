@@ -27,36 +27,22 @@ def pyramid(ctx, x, y, width, height, color, random_center=True):
     triangle(ctx, br, bl, center, cols[2])
     triangle(ctx, bl, tl, center, cols[3])
 
+Y_OFFSET=12
 def getDPC(point,Z=0):
   SCALER = 100
-  return f"{point[0]/SCALER},{point[1]/SCALER},{Z}"
+  return f"{point[0]/SCALER},{(-point[1]/SCALER)+Y_OFFSET},{Z}"
 
 def triangle(ctx, p1, p2, p3, color):
-
-    # ob_helper.drawLineOB(p1,p2)
-    # ob_helper.drawLineOB(p2,p3)
-    # ob_helper.drawLineOB(p3,p1)
-
-    # I DON'T QUITE HAVE SHADING RIGHT, I DON'T UNDERSTAND THESE VALUES BEING BETWEEN 0 AND 1
-    while True:
-      for i in range(3):
-        if color[i] < 0.1:
-          print(color)
-          color_list = list(color)
-          color_list[i] = color_list[i]*10
-          color = tuple(color_list)
-      if color[0] >= 0.1 and color[1] >= 0.1 and color[2] >= 0.1:
-        break
-    
-    # I THINK THIS IS THE RIGHT THING TO DO, I WILL NOTE THAT COLORS SEEM TO APPEAR IN THE RIGHT ORDER OF SHADING, I.E. STARTING FROM BOTTOM FACE, ROTATING COUNTER CLOCKWISE FROM LIGHT TO DARK
-    randomColor = ob_helper.rgb_to_hex(round(color[0]*255), round(color[1]*255), round(color[2]*255))
-
-
-    ob_helper.sendCommands([f"color.set.html={randomColor}"])
+    ob_helper.sendCommands([f"color.set.rgb={color[0]},{color[1]},{color[2]}"])
     ob_helper.sendCommands([f"draw.path=[{getDPC(p1)}]," + 
       f"[{getDPC(p2)}]," + 
       f"[{getDPC(p3)}]"])
 
+    # ctx.move_to(*p1)
+    # for p in [p1, p2, p3]:
+        # ctx.line_to(*p)
+    # ctx.set_source_rgb(*color)
+    # ctx.fill()
 
 def main(filename="output.png", img_width=1000, img_height=1000, palette=random.choice(palettes.PALETTES), columns=15, rows=10):
     hostname = socket.gethostname()
@@ -68,9 +54,20 @@ def main(filename="output.png", img_width=1000, img_height=1000, palette=random.
     ob_helper.sendCommands(["brush.type=UnlitHull"])
     ctx = None
 
+    # ims = cairo.ImageSurface(cairo.FORMAT_ARGB32, img_width, img_height)
+    # ims.set_fallback_resolution(300.0, 300.0)
+    # ctx = cairo.Context(ims)
+
+    # Background
+    # ctx.rectangle(0, 0, img_width, img_height)
+    # ctx.set_source_rgb(*palettes.hex_to_tuple(palette['background']))
+    # ctx.fill()
+
     for x in range(0, img_width, img_width // columns):
         for y in range(0, img_height, img_height // rows):
             pyramid(ctx, x, y, img_width // columns, img_height // rows, palettes.hex_to_tuple(random.choice(palette['colors'])))
+
+    # ims.write_to_png(filename)
 
 def make_random(filename="output.png", p=random.choice(palettes.PALETTES), img_width=1000, img_height=1000):
     MAX_SQUARES = 10
@@ -78,7 +75,7 @@ def make_random(filename="output.png", p=random.choice(palettes.PALETTES), img_w
     r = random.randint(5, MAX_SQUARES) if random.random() < 0.5 else c
     if img_width != img_height:
         img_width = img_height = max(img_width, img_height)
-    # print(filename, c, r, p, img_width, img_height)
+    print(filename, c, r, p, img_width, img_height)
     main(filename=filename.format(1), palette=p, columns=c, rows=r, img_height=img_height, img_width=img_width)
 
 if __name__ == "__main__":
