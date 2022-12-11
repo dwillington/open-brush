@@ -38,7 +38,8 @@
         <label>Draw U Strokes<input type="checkbox" id="ustrokes" checked></label>
         <label>Draw V Strokes<input type="checkbox" id="vstrokes"></label><br>
         <br>
-        <button onclick='run();'>Run</button><br>
+        <button onclick='run();'>Run</button>
+        <button onclick='autorun();'>Auto Run</button><br>
         <br><br>
         <button onclick="sendCommands(['save.new']);">Save Current Scene</button>
         <button onclick="sendCommands(['export.current']);">Export Current Scene</button>
@@ -63,7 +64,7 @@
     function sendCommands(commands) {
         var xmlHttp = new XMLHttpRequest();
         var url = 'http://localhost:40074/api/v1?' + commands.join('&');
-        log(commands.join('\n'));
+        <!-- log(commands.join('\n')); -->
         xmlHttp.open('GET', url, false);
         try {
           xmlHttp.send();
@@ -95,6 +96,40 @@
         } else {
             sendCommands([`color.set.hsv=${colorParam}`]);
         }
+    }
+    
+    function sleep(miliseconds) {
+      var currentTime = new Date().getTime();
+      while (currentTime + miliseconds >= new Date().getTime()) {
+      }
+    }
+
+    function selectOption(index){
+      if (index == 0) { 
+      document.getElementById("presets").options.selectedIndex = index;
+      }
+      else {
+      document.getElementById("presets").options.selectedIndex = (index - 1);
+      }
+      if ("createEvent" in document) {
+            var evt = document.createEvent("HTMLEvents");
+            evt.initEvent("change", false, true);
+            document.getElementById("presets").dispatchEvent(evt);
+        }
+        else {
+            document.getElementById("presets").fireEvent("onchange");
+        }
+    }
+
+    function autorun() {
+    
+      for(let i=0; i<20; i++) {
+        sendCommands(['new']);
+        selectOption(i)
+        run();
+        sleep(5000);
+      }
+    
     }
 
     function run() {

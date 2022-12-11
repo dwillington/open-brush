@@ -1,5 +1,6 @@
 from graphics.Geometry import Line as draw_line
 from graphics.Vector import Vector as vec2
+import os
 import socket
 import sys
 sys.path.append("..")
@@ -129,14 +130,15 @@ def draw():
 
 def main():
     hostname = socket.gethostname()
-    if(hostname == "centos7.linuxvmimages.local"):
-      ob_helper.ob_host="10.0.2.2"
+    if "OB_HOST" in os.environ:
+      ob_helper.ob_host=os.environ['OB_HOST']
+
     ob_helper.sendCommands(["new"])
     ob_helper.sendCommands(["brush.move.to=0,0,0","brush.look.up"])
     ob_helper.sendCommands(["user.move.to=-5,10,10"])
 
-    # ob_helper.sendCommands(["brush.type=Light"])
-    # ob_helper.sendCommands(["brush.size.set=.1"])
+    ob_helper.sendCommands(["brush.type=Light"])
+    ob_helper.sendCommands(["brush.size.set=.2"])
 
     # ob_helper.sendCommands(["brush.type=Icing"])
     # ob_helper.sendCommands(["brush.size.set=0.1"])

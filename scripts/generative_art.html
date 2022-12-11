@@ -574,44 +574,53 @@
     
  //`color.set.html=${getRandomColorInHex()}`,
 
+  sendCommands(["brush.size.set=0.25"]);
+
   function drawPietMondrian() {
-    clearSceneAndMoveTo(-4,10,10);
+    sendCommands(["brush.type=Light"]);
+    clearSceneAndMoveTo(0,10,10);
     inst = new PietMondrian(10, 1);
     inst.draw();
   }
 
   function drawTiledLines() {
-    clearSceneAndMoveTo(-4,10,10);
+    sendCommands(["brush.type=Light"]);
+    clearSceneAndMoveTo(0,10,10);
     inst = new TiledLines(10, 0.5);
     inst.draw();
   }
 
   function drawTriangularMesh() {
-    clearSceneAndMoveTo(-4,10,10);
+    sendCommands(["brush.type=ShinyHull"]);
+    clearSceneAndMoveTo(0,10,10);
     inst = new TriangularMesh(10, 16);
     inst.draw();
   }
 
   function drawJoyDivision() {
-    clearSceneAndMoveTo(-4,10,10);
+    sendCommands(["brush.type=NeonPulse"]);
+    clearSceneAndMoveTo(0,10,10);
     inst = new JoyDivision(10, 0.25);
     inst.draw();
   }
 
   function drawCubicDisarray() {
-    clearSceneAndMoveTo(-4,10,10);
+    sendCommands(["brush.type=Light"]);
+    clearSceneAndMoveTo(0,10,10);
     inst = new CubicDisarray(1, 8); // ALSO SEE rotateMultiplier
     inst.draw();
   }
 
   function drawUnDeuxTrois() {
-    clearSceneAndMoveTo(-4,10,10);
+    sendCommands(["brush.type=Light"]);
+    clearSceneAndMoveTo(0,10,10);
     inst = new UnDeuxTrois(6, 0.5);
     inst.draw();
   }
 
   function drawHypnoticSquares() {
-    clearSceneAndMoveTo(-4,10,10);
+    sendCommands(["brush.type=Light"]);
+    clearSceneAndMoveTo(0,10,10);
     inst = new HypnoticSquares(10, 10); // 10,16=6x6 squares
     inst.draw();
   }

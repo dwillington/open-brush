@@ -9,6 +9,8 @@
 #
 #----------------------------------------------------------------
 
+import os
+import random
 import math
 import decimal as D
 import Coordinates as C
@@ -247,6 +249,8 @@ def geodesicDome():
     print("/**********************************************************/")
 
     for e in gs.Edge_List:
+        randomColor = format(random.randint(0,16777215),'x')
+        ob_helper.sendCommands([f"color.set.html={randomColor}"])
         ob_helper.sendCommands([f"draw.path=[{getDPC(e.x1)}],[{getDPC(e.x2)}]"])
         # print(e.Get_Edge_Coordinates())
 
@@ -309,11 +313,12 @@ def geodesicDome():
 def main():
 
     hostname = socket.gethostname()
-    if(hostname == "centos7.linuxvmimages.local" or hostname == "osboxes.org"):
-      ob_helper.ob_host="10.0.2.2"
+    if "OB_HOST" in os.environ:
+      ob_helper.ob_host=os.environ['OB_HOST']
+
     ob_helper.sendCommands(["new"])
     ob_helper.sendCommands(["brush.move.to=0,0,0","brush.look.up"])
-    ob_helper.sendCommands(["user.move.to=0,5,20"])
+    ob_helper.sendCommands(["user.move.to=0,5,22"])
 
     geodesicDome()
 

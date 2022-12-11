@@ -1,4 +1,5 @@
 from graphics.Geometry import Line
+import os
 import socket
 import sys
 sys.path.append("..")
@@ -11,9 +12,10 @@ height, width = 1000, 1000
 grid_size = 100
 border, mag_border = 50, 450
 step_x, step_y = (width//grid_size), (height//grid_size)
-EDGE_LIMIT = 200 # HAS A BEARING ON THE LENGTH OF "LINES" COMING OUT THE CIRCLE, LARGER MEANS LARGER "LINES"
+EDGE_LIMIT_MODIFIER = 2 # HAS A BEARING ON THE LENGTH OF "LINES" COMING OUT THE CIRCLE, LARGER MEANS LARGER "LINES", TRY INCREMENTING THIS VALUE BY 1, AT A TIME
+EDGE_LIMIT = 200 + EDGE_LIMIT_MODIFIER
 PARTICLE_SIGNATURE_SIZE = 1.02 # MULTIPLIER ON THE LENGTH OF INDIVIDUAL SEGMENTS OF "LINES" COMING OUT THE CIRCLE
-START_NUM = 180 # CONTROLS HOW MANY "LINES" SHOOTING OUT THE CIRCLE
+START_NUM = 182 # CONTROLS HOW MANY "LINES" SHOOTING OUT THE CIRCLE
 
 # Particle class
 class Particle:
@@ -134,11 +136,15 @@ def draw():
 
 def main():
     hostname = socket.gethostname()
-    if(hostname == "centos7.linuxvmimages.local"):
-      ob_helper.ob_host="10.0.2.2"
+    if "OB_HOST" in os.environ:
+      ob_helper.ob_host=os.environ['OB_HOST']
+
     ob_helper.sendCommands(["new"])
     ob_helper.sendCommands(["brush.move.to=0,0,0","brush.look.up"])
-    ob_helper.sendCommands(["user.move.to=-7,10,10"])
+    ob_helper.sendCommands(["user.move.to=-5,10,10"])
+    
+    ob_helper.sendCommands(["brush.type=Icing"])
+    ob_helper.sendCommands(["brush.size.set=0.2"])
 
     draw()
     ob_helper.sendCommands(["debug.brush"])

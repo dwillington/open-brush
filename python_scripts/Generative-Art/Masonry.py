@@ -1,4 +1,5 @@
 from graphics.Vector import Vector as vec2
+import os
 import socket
 import sys
 sys.path.append("..")
@@ -23,7 +24,7 @@ outline_deform = random.uniform(2,DEFORM_FACTOR_MAX)
 border_size = 40
 COUNTER = 0
 START_Y = 2
-BRUSH_TYPE = "ShinyHull"
+BRUSH_TYPE = "UnlitHull"
 # BRUSH_TYPE = "SoftHighlighter"
 
 # getDrawPathCoordinates
@@ -144,8 +145,9 @@ def draw_cube_layer(o, layer_color):
 
 def main():
     hostname = socket.gethostname()
-    if(hostname == "centos7.linuxvmimages.local"):
-      ob_helper.ob_host="10.0.2.2"
+    if "OB_HOST" in os.environ:
+      ob_helper.ob_host=os.environ['OB_HOST']
+
     ob_helper.sendCommands(["new"])
     ob_helper.sendCommands(["brush.move.to=0,0,0","brush.look.up"])
     ob_helper.sendCommands(["user.move.to=-8,8,14"])

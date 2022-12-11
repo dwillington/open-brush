@@ -8,6 +8,10 @@ autoreconf -v -i -W all
 make
 ./src/dome -f4 -s output.OFF
 cp output.OFF output.OFF_4
+
+source ~/venv_3.6.8/bin/activate
+# IF NOT LOCALHOST
+export OB_HOST="10.0.2.2"
 ```
 NOTE: output.OFF_4 is the dome data output of the C program above<br />
 

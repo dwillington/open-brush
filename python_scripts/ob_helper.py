@@ -4,11 +4,6 @@ import socket
 
 ob_host = "127.0.0.1"
 
-def initHost():
-    hostname = socket.gethostname()
-    if(hostname == "centos7.linuxvmimages.local"):
-      self.ob_host="10.0.2.2"
-
 def callUrl(url):
   try:
     # urllib.request.urlopen(url)

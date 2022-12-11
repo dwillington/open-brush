@@ -1,5 +1,7 @@
 #! /usr/bin/env python
 
+import os
+import random
 import socket
 import sys
 sys.path.append("..")
@@ -52,11 +54,12 @@ def fromDomeOutput():
 def main():
 
     hostname = socket.gethostname()
-    if(hostname == "centos7.linuxvmimages.local" or hostname == "osboxes.org"):
-      ob_helper.ob_host="192.168.86.52"
+    if "OB_HOST" in os.environ:
+      ob_helper.ob_host=os.environ['OB_HOST']
+
     ob_helper.sendCommands(["new"])
     ob_helper.sendCommands(["brush.move.to=0,0,0","brush.look.up"])
-    ob_helper.sendCommands(["user.move.to=0,4,20"])
+    ob_helper.sendCommands(["user.move.to=0,4,40"])
 
     fromDomeOutput()
 

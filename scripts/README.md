@@ -22,3 +22,7 @@ http://localhost:8000/lindenmayer.html
 
 
 
+
+Use Configuration
+-------------
+https://docs.openbrush.app/user-guide/open-brush-api#how-do-i-configure-it

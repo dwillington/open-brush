@@ -1,6 +1,7 @@
 from graphics.Geometry import Line
 from graphics.Helpers import map
 from graphics.Generators import NoiseLoop
+import os
 import socket
 import sys
 sys.path.append("..")
@@ -20,19 +21,19 @@ def drawMosiacPiece(lineA, lineB, layer):
   randomColor = format(random.randint(0,16777215),'x')
   ob_helper.sendCommands([f"color.set.html={randomColor}"])
 
-  ob_helper.drawLineOB(lineA.p0,lineA.p1)
-  if lineB is not None: # DRAW THE CIRCLE AT THE FLOOR OF THE "MINUTE" HANDS ON THE CLOCK
-    ob_helper.drawLineOB(lineA.p0,lineB.p0)
-    if layer == (num_layers-1): # DRAW THE CIRCLE AT THE CEILING OF THE "MINUTE" HANDS ON THE CLOCK
-        ob_helper.drawLineOB(lineA.p1,lineB.p1)
+  # ob_helper.drawLineOB(lineA.p0,lineA.p1)
+  # if lineB is not None: # DRAW THE CIRCLE AT THE FLOOR OF THE "MINUTE" HANDS ON THE CLOCK
+    # ob_helper.drawLineOB(lineA.p0,lineB.p0)
+    # if layer == (num_layers-1): # DRAW THE CIRCLE AT THE CEILING OF THE "MINUTE" HANDS ON THE CLOCK
+        # ob_helper.drawLineOB(lineA.p1,lineB.p1)
 
   # draw.path=A,B,C,D ACHIEVES SHAPE FILL WITH BRUSH.TYPE = "*HULL"
-  # if lineB is not None:
-    # ob_helper.sendCommands(["brush.type=ShinyHull"])
-    # randomColor = format(random.randint(0,16777215),'x')
-    # ob_helper.sendCommands([f"color.set.html={randomColor}"])
-    # ob_helper.sendCommands([f"draw.path=[{getDPC(lineA.p0)}],[{getDPC(lineB.p0)}]," + 
-      # f"[{getDPC(lineB.p1)}],[{getDPC(lineA.p1)}],[{getDPC(lineA.p0)}]"])
+  if lineB is not None:
+    ob_helper.sendCommands(["brush.type=ShinyHull"])
+    randomColor = format(random.randint(0,16777215),'x')
+    ob_helper.sendCommands([f"color.set.html={randomColor}"])
+    ob_helper.sendCommands([f"draw.path=[{getDPC(lineA.p0)}],[{getDPC(lineB.p0)}]," + 
+      f"[{getDPC(lineB.p1)}],[{getDPC(lineA.p1)}],[{getDPC(lineA.p0)}]"])
 
 def draw():
 
@@ -99,8 +100,9 @@ def draw():
 
 def main():
     hostname = socket.gethostname()
-    if(hostname == "centos7.linuxvmimages.local"):
-      ob_helper.ob_host="10.0.2.2"
+    if "OB_HOST" in os.environ:
+      ob_helper.ob_host=os.environ['OB_HOST']
+
     ob_helper.sendCommands(["new"])
     ob_helper.sendCommands(["brush.move.to=0,0,0","brush.look.up"])
     ob_helper.sendCommands(["user.move.to=-5,10,10"])
