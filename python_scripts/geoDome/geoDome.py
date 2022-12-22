@@ -39,16 +39,30 @@ def fromDomeOutput():
 
     # READ IN AND DRAW ALL FACES
     startFaces = 2+numOfCoordinates
+
+    # ONLY DRAW LINES
+    ob_helper.sendCommands(["brush.type=Dots"])
     for i in range(startFaces,startFaces+numOfFaces):
         v = content[i].rstrip().split(" ")
-        # draw_path=f"draw.path=[{coordinates[int(v[1])]}],[{coordinates[int(v[2])]}],[{coordinates[int(v[3])]}]"
-        # ob_helper.sendCommands([f"{draw_path}"])
-        draw_path=f"draw.path=[{coordinates[int(v[1])]}],[{coordinates[int(v[2])]}]"
+        draw_path=f"draw.path=[{coordinates[int(v[1])]}],[{coordinates[int(v[2])]}],[{coordinates[int(v[3])]}],[{coordinates[int(v[1])]}]"
+        # randomColor = format(random.randint(0,16777215),'x')
+        # ob_helper.sendCommands([f"color.set.html={randomColor}"])
         ob_helper.sendCommands([f"{draw_path}"])
-        draw_path=f"draw.path=[{coordinates[int(v[2])]}],[{coordinates[int(v[3])]}]"
-        ob_helper.sendCommands([f"{draw_path}"])
-        draw_path=f"draw.path=[{coordinates[int(v[3])]}],[{coordinates[int(v[1])]}]"
-        ob_helper.sendCommands([f"{draw_path}"])
+
+    if False:
+      # ONLY DRAW THE SURFACE WITH A HULL BRUSH
+      ob_helper.sendCommands(["brush.type=Diamond"]) # ShinyHull,MatteHull,UnlitHull,Diamond
+      for i in range(startFaces,startFaces+numOfFaces):
+          v = content[i].rstrip().split(" ")
+          draw_path=f"draw.path=[{coordinates[int(v[1])]}],[{coordinates[int(v[2])]}],[{coordinates[int(v[3])]}],[{coordinates[int(v[1])]}]"
+          ob_helper.sendCommands([f"{draw_path}"])
+
+          # draw_path=f"draw.path=[{coordinates[int(v[1])]}],[{coordinates[int(v[2])]}]"
+          # ob_helper.sendCommands([f"{draw_path}"])
+          # draw_path=f"draw.path=[{coordinates[int(v[2])]}],[{coordinates[int(v[3])]}]"
+          # ob_helper.sendCommands([f"{draw_path}"])
+          # draw_path=f"draw.path=[{coordinates[int(v[3])]}],[{coordinates[int(v[1])]}]"
+          # ob_helper.sendCommands([f"{draw_path}"])
 
 
 def main():
