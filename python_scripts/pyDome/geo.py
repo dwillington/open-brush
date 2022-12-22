@@ -317,7 +317,7 @@ def main():
       ob_helper.ob_host=os.environ['OB_HOST']
 
     ob_helper.sendCommands(["new"])
-    ob_helper.sendCommands(["brush.type=Diamond"])
+    ob_helper.sendCommands(["brush.type=Light"])
     ob_helper.sendCommands(["user.move.to=0,5,22"])
 
     geodesicDome()
