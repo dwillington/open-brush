@@ -24,7 +24,8 @@ python3 Line_Walker.py
 
 python3 Mosaic_Circles.py
 -------------
-<img src="images/Mosaic_Circles.JPG" width="400" /> | <img src="images/Mosaic_Circles_2.JPG" width="400" />  
+<img src="images/Mosaic_Circles.JPG" width="400" /> | <img src="images/Mosaic_Circles_JoinMinusOne.JPG" width="400" />  
+
 python3 Offset_Quads.py
 -------------
 <img src="images/Offset_Quads.JPG" width="400" /> | <img src="images/Offset_Quads_2.JPG" width="400" />

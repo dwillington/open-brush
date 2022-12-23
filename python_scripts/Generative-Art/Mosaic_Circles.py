@@ -21,19 +21,25 @@ def drawMosiacPiece(lineA, lineB, layer):
   randomColor = format(random.randint(0,16777215),'x')
   ob_helper.sendCommands([f"color.set.html={randomColor}"])
 
+  # UNCOMMENT IF USING NON HULL BRUSH
   # ob_helper.drawLineOB(lineA.p0,lineA.p1)
   # if lineB is not None: # DRAW THE CIRCLE AT THE FLOOR OF THE "MINUTE" HANDS ON THE CLOCK
     # ob_helper.drawLineOB(lineA.p0,lineB.p0)
     # if layer == (num_layers-1): # DRAW THE CIRCLE AT THE CEILING OF THE "MINUTE" HANDS ON THE CLOCK
         # ob_helper.drawLineOB(lineA.p1,lineB.p1)
 
-  # draw.path=A,B,C,D ACHIEVES SHAPE FILL WITH BRUSH.TYPE = "*HULL"
   if lineB is not None:
-    ob_helper.sendCommands(["brush.type=ShinyHull"])
     randomColor = format(random.randint(0,16777215),'x')
     ob_helper.sendCommands([f"color.set.html={randomColor}"])
-    ob_helper.sendCommands([f"draw.path=[{getDPC(lineA.p0)}],[{getDPC(lineB.p0)}]," + 
-      f"[{getDPC(lineB.p1)}],[{getDPC(lineA.p1)}],[{getDPC(lineA.p0)}]"])
+
+    # draw.path=A,B,C,D gives flush surface vs draw.path=A,B,C which gives more interesting texture
+
+    ob_helper.sendCommands([f"draw.path=[{getDPC(lineA.p0)}]," +
+                            f"[{getDPC(lineB.p0)}]," + 
+                            f"[{getDPC(lineB.p1)}]," +
+                            f"[{getDPC(lineA.p1)}]," +
+                            # f"[{getDPC(lineA.p0)}]" +
+                            ""])
 
 def draw():
 
@@ -106,6 +112,8 @@ def main():
     ob_helper.sendCommands(["new"])
     ob_helper.sendCommands(["brush.move.to=0,0,0","brush.look.up"])
     ob_helper.sendCommands(["user.move.to=-5,10,10"])
+    # ACHIEVE SHAPE FILL WITH brush.type ShinyHull MatteHull UnlitHull Diamond
+    ob_helper.sendCommands(["brush.type=ShinyHull"])
 
     draw()
     ob_helper.sendCommands(["debug.brush"])
