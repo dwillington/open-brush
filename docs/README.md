@@ -1,9 +1,23 @@
 # docs
 
 
-Camera Drift
+### api bindings for python
 
-Simon: We had some unexpected things happen with the camera position changing and odd rotation of  the camera.  I’m not clear if these are bugs or we are doing something wrong.   Would you be available in the coming days to have a zoom call?  Please let me know and some suitable dates/times and Alvaro will set it up for us.
+https://gist.github.com/andybak/c700120232ca68a90adc791f75c8a16c
+
+```
+unlink ~/venv_3.8/lib/python3.8/site-packages/ob.py
+ln -s /root/temp/git_repos/open-brush/docs/api_bindings/ob.py ~/venv_3.8/lib/python3.8/site-packages/ob.py
+ipython
+from ob import ob
+
+ob.new()
+ob.viewonly.toggle()
+
+
+```
+
+### Camera Drift
 
 Reproducing the problem:
 
@@ -34,7 +48,9 @@ To demonstrate this solves the problem demonstrated above you can follow these s
 
 Remove the headset, put it to sleep then awaken it, you can always bring the world back into alignment as long as you look at the point on the wall and long-press the Oculus button.
 
-Note: this is only necessary if the headset has gone into sleep mode. An alternative is to change the system settings so that it doesn't go to sleep so quickly. You can also place a piece of tape over the proximity sensor so it thinks the headset is always being worn: https://levelup.gitconnected.com/how-to-keep-your-oculus-quest-2-from-going-to-sleep-when-you-take-it-off-8cfb4b661248
+Note: this is only necessary if the headset has gone into sleep mode. An alternative is to change the system settings so that it doesn't go to sleep so quickly. You can also place a piece of tape over the proximity sensor so it thinks the headset is always being worn.
+
+https://levelup.gitconnected.com/how-to-keep-your-oculus-quest-2-from-going-to-sleep-when-you-take-it-off-8cfb4b661248
 
 (The only thing that might cause the headset to lose its position is if you cover up enough of the external cameras to confuse the tracking. This is fairly hard to do by accident but do some testing on your end to confirm the above is an effective solution)
 
@@ -42,9 +58,15 @@ Note: this is only necessary if the headset has gone into sleep mode. An alterna
 Moving forward...
 
 There's some new Quest SDK Platform features that point to a different approach. Have a play with ShapesXR - especially the 1:1 mode in passthrough. 
+
 https://www.shapesxr.com/post/update-1-1-mode-real-world-reference-passthrough-material-teleportation-tool
+
 Update - 1:1 mode, Real-world reference, Passthrough material, Tele...
+
 Over the past months, we have worked hard with many of our users to test and improve SIGNIFICANTLY the passthrough feature and we are glad to release so many functionalities that will unlock incredible opportunities for designing and prototyping immersive apps as well as design and mockup products or experiences on top of the physical world.
+
 Update - 1:1 mode, Real-world reference, Passthrough material, Tele...
+
 I wonder if simply adding a desk or other furniture to the Quest room setup will force it be more consistent in it's alignment. Hard to see how the new mixed reality features would work properly otherwise
+
 The manual solution is just a "calibrate to room" feature that gets you to place the controllers on a memorized spot and uses that to re-align. 
