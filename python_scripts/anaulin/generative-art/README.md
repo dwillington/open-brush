@@ -8,3 +8,6 @@ python3 pyramids.py
 -------------
 <img src="images/pyramids.JPG" width="600" />
 
+python3 robots.py
+-------------
+<img src="images/robots.JPG" width="600" />
