@@ -28,3 +28,35 @@ def drawLineOB(p0, p1, scaler=100, generateRandomColor=False):
 
 def rgb_to_hex(r, g, b):
   return ('{:X}{:X}{:X}').format(r, g, b)
+
+class Point:
+
+    def __init__(self, x, y, z=0):
+        self.x = x
+        self.y = y
+        self.z = z
+
+    def flip_over_Y_axis(self):
+        self.y = self.y * -1
+
+    def rotate_ccw_90(self):
+        temp = self.x
+        self.x = self.y
+        self.y = temp
+
+    def get_3d_coordinates(self):
+        return [self.x, self.y, self.z]
+
+    def origin_compress(self, compress_factor):
+        self.x = self.x * compress_factor
+        self.y = self.y * compress_factor
+        self.z = self.z * compress_factor
+
+    def set_X_offset(self, x_offset):
+        self.x = self.x + x_offset
+
+    def set_Y_offset(self, y_offset):
+        self.y = self.y + y_offset
+
+    def set_Z_offset(self, z_offset):
+        self.z = self.z + z_offset

@@ -1,4 +1,3 @@
-import cairo
 import math
 import random
 import randomcolor
@@ -34,9 +33,9 @@ def hex_to_tuple(hex):
 
 # For testing
 def draw_colors(filename, colors):
-    ims = cairo.ImageSurface(cairo.FORMAT_ARGB32, IMG_WIDTH, IMG_HEIGHT)
-    ims.set_fallback_resolution(300.0, 300.0)
-    ctx = cairo.Context(ims)
+    # ims = cairo.ImageSurface(cairo.FORMAT_ARGB32, IMG_WIDTH, IMG_HEIGHT)
+    # ims.set_fallback_resolution(300.0, 300.0)
+    # ctx = cairo.Context(ims)
 
     width = IMG_WIDTH // len(colors)
     for idx, c in enumerate(colors):
