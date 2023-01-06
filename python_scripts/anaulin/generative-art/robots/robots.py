@@ -134,7 +134,7 @@ def draw_robot(ctx, x, y, x2, y2, palette):
     face_radius = 0  # random.randint(margin, 5 * margin)
     ob_helper.sendCommands(["brush.type=Light"])
     draw_rounded_rect(ctx, x + margin, x2 - margin, face_top, face_bottom,
-                      face_radius, face_color)
+                      face_radius, face_color, outline=True)
 
     # Eyes. Ensure color different from face.
     eye_color = palettes.hex_to_tuple(random.choice(non_face_palette))
@@ -172,7 +172,7 @@ def draw_ears(ctx, x, x2, face_top, face_bottom, face_color, margin):
 
 
 def draw_screws(ctx, x, x2, face_top, face_bottom, margin):
-    screw_count = random.randint(5, 5)
+    screw_count = random.randint(2, 4)
     screw_x = random.choice([x + 2 * margin, x2 - 2 * margin])
     screw_radius = random.uniform(0.05, 0.75)
     for i in range(screw_count):
@@ -311,8 +311,8 @@ def draw_antennas(ctx, x, y, x2, y2, margin, palette):
     antenna_count = random.randint(1, 4)
     antenna_bottom = y2 - margin - antenna_height
     antenna_interval = (x2 - x - 2 * margin) / (antenna_count + 1)
-    antenna_width = random.uniform(0.1, 0.5)
     for i in range(antenna_count):
+        antenna_width = random.uniform(0.1, 0.5)
         antenna_x = x + margin + antenna_interval * (i + 1)
         ctx.move_to(antenna_x, antenna_bottom)
         ctx.set_source_rgb(*antenna_color)
@@ -321,12 +321,19 @@ def draw_antennas(ctx, x, y, x2, y2, margin, palette):
         ctx.set_line_width(antenna_width)
         # ctx.stroke()
         if random.randint(1, 10) <= 10:
+            ob_helper.sendCommands(["brush.type=MatteHull"])
+            ctx.arc(
+                antenna_x,
+                antenna_bottom + antenna_height + margin,
+                random.uniform(antenna_width * 2, antenna_width * 5)*0.25,
+                0, 2*pi, brush_width=(antenna_width*2)
+            )
             ob_helper.sendCommands(["brush.type=Waveform"])
             ctx.arc(
                 antenna_x,
                 antenna_bottom + antenna_height + margin,
                 random.uniform(antenna_width * 2, antenna_width * 5),
-                0, 2*pi, brush_width=0.1
+                0, 2*pi, brush_width=(antenna_width*2)
             )
             # ctx.set_source_rgb(*antenna_color)
             # ctx.fill()
@@ -386,8 +393,8 @@ def main(filename="output.png", img_width=2000, img_height=2000, count=5, palett
         ob_helper.ob_host = os.environ['OB_HOST']
     ob_helper.sendCommands(["new"])
     ob_helper.sendCommands(["brush.move.to=0,0,0", "brush.look.up"])
-    # ob_helper.sendCommands(["user.move.to=-5,8,18"])
-    ob_helper.sendCommands(["user.move.to=-10,5,30"])
+    # ob_helper.sendCommands(["user.move.to=-10,5,30"])
+    ob_helper.sendCommands(["user.move.to=-25,5,30"])
     ob_helper.sendCommands(["brush.size.set=0.1"])
     ob_helper.sendCommands(["brush.type=Light"])
 
