@@ -14,7 +14,6 @@ def graphing():
   ob.draw.path("[0,0,0],[0,1,0]")
 
 """
-a time series of 
 
 def generate_time_series():
 
@@ -181,15 +180,13 @@ def sundays_within_last_x_days(num_days = 90):
     result = []
     end_date = date.today()
     start_date = end_date - timedelta(days = num_days)
-
     while start_date <= end_date:
         if is_sunday(start_date):
             result.append(start_date.strftime('%Y-%b-%d'))
         start_date += timedelta(days = 1)
-
     return result
 
-def git_weely_commits():
+def git_weekly_commits():
   url = 'https://api.github.com/repos/icosa-gallery/open-brush/stats/participation'
   headers = {'Accept': 'application/vnd.github+json',
              'X-GitHub-Api-Version': '2022-11-28'}
@@ -202,8 +199,8 @@ def git_weely_commits():
     # print(f"weekly_commits:{len(weekly_commits)}")
   return weekly_commits
 
-def draw_git_weely_commits():
-  weekly_commits = git_weely_commits(); weekly_commits.reverse()  # GET WEEKLY COMMITS IN DESCENDING ORDER BY MOST RECENT WEEK FIRST
+def draw_git_weekly_commits():
+  weekly_commits = git_weekly_commits(); weekly_commits.reverse()  # GET WEEKLY COMMITS IN DESCENDING ORDER BY MOST RECENT WEEK FIRST
   print(weekly_commits[-5:])
   sundays = sundays_within_last_x_days(400); sundays.reverse() # GET WEEKS IN DESCENDING ORDER
   commits_by_week = deque()
@@ -224,7 +221,7 @@ def main():
 
   # draw_time_series()
 
-  draw_git_weely_commits()
+  draw_git_weekly_commits()
 
 
 if __name__ == '__main__':
