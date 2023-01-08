@@ -4,6 +4,12 @@ import urllib.request
 class ob:
 
     OB_HOST = "localhost"
+    
+    STATIC_BRUSHES = ["Light","Icing","OilPaint","Ink","ThickPaint","WetPaint","Marker","TaperedMarker","PinchedMarker","Highlighter","Flat","TaperedFlat","PinchedFlat","SoftHighlighter","VelvetInk"
+    ,"DuctTape","Paper","CelVinyl", "Toon"]
+    DYNAMIC_BRUSHES= ["Fire","DrWigglez","Hypercolor","Comet","Disco","Rainbow","Waveform","Electricity","ChromaticWave","NeonPulse","Dots","Plasma","Streamers"]
+    FILL_BRUSHES = ["Diamond","ShinyHull","MatteHull","UnlitHull"]
+
 
     class listenfor:
         @staticmethod

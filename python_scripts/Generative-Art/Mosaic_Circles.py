@@ -105,7 +105,6 @@ def draw():
 
 
 def main():
-    hostname = socket.gethostname()
     if "OB_HOST" in os.environ:
       ob_helper.ob_host=os.environ['OB_HOST']
 

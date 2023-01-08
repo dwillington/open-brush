@@ -38,6 +38,9 @@ python3 Perlin_Brush_Stroke.py
 -------------
 <img src="images/Perlin_Brush_Stroke.JPG" width="400" /> | <img src="images/Perlin_Brush_Stroke_2.JPG" width="400" />
 
+python3 Vertical_Lines.py
+-------------
+<img src="images/Vertical_Lines.JPG" width="400" /> | <img src="images/Vertical_Lines_2.JPG" width="400" />
 
 ```
 "Line_Walker"
@@ -52,6 +55,7 @@ python3 Circular.py
 python3 Magnetic_Flow.py
 python3 Masonry.py
 python3 Offset_Quads.py
+python3 Vertical_Lines.py
 
 declare -a arr=("Line_Grid" "Mosaic_Circles" "Parallel_Lines" "Perlin_Brush_Stroke" "Circular" "Magnetic_Flow" )
 for i in "${arr[@]}"
