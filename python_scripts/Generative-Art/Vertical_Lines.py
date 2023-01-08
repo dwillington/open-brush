@@ -97,8 +97,8 @@ def get_direction():
     return dirs
 
 Y_OFFSET = 0
+SCALER = .01
 def getDPC(point, Z=0):
-    SCALER = .01
     return f"{round(point[0]*SCALER,2)},{round((point[1]*SCALER)+Y_OFFSET,2)},{Z}"
 
 def draw_walkers(walkers):
@@ -113,7 +113,7 @@ def draw_walkers(walkers):
 
 def draw():
 
-    MIN_WALKERS = 40
+    MIN_WALKERS = 20
     num_walkers = random.randint(MIN_WALKERS, MIN_WALKERS*2)
     # num_walkers = random.randint(100, 200)
     walkers = []
