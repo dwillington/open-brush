@@ -64,7 +64,7 @@
     function sendCommands(commands) {
         var xmlHttp = new XMLHttpRequest();
         var url = 'http://localhost:40074/api/v1?' + commands.join('&');
-        <!-- log(commands.join('\n')); -->
+        log(commands.join('\n'));
         xmlHttp.open('GET', url, false);
         try {
           xmlHttp.send();

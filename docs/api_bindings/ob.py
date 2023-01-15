@@ -84,6 +84,9 @@ class ob:
             @staticmethod
             def by(position):
                 urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?brush.move.by={position}")
+            @staticmethod
+            def straight(distance):
+                urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?brush.move={distance}")
         # @staticmethod
         # def move(distance):
             # urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?brush.move={distance}")

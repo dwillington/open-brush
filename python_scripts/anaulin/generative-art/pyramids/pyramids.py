@@ -79,3 +79,4 @@ def make_random(filename="output.png", p=random.choice(palettes.PALETTES), img_w
 if __name__ == "__main__":
     for idx in range(1):
         make_random(filename="output-{}.png".format(idx))
+

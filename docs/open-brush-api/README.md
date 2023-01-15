@@ -56,6 +56,13 @@ ___
 
 Draws a polygon at the current brush position. Does not move the brush position
 
+___
+NOTE: 
+<br />
+angle is the "rotation" of the polygon, which becomes relevant when you have something like a square. A 45 degree angle is a square on its side, a 90 degree angle is a diamond.
+<br />
+___
+
 **showfolder.scripts**[ Try it](http://localhost:40074/api/v1?showfolder.scripts)
 
 Opens the user's Scripts folder on the desktop
