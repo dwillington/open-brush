@@ -194,6 +194,7 @@ def draw_mouth(ctx, x, x2, face_top, face_bottom, margin, color):
         )
     else:
         fine_line_width = mouth_line_width // 9
+        #TODO: ONE LONGER CORNER GIVES THE MOUTH A FUNNY LOOK, CAN ADD WITH RANDOMIZATION
         draw_rounded_rect(
             ctx, mouth_x_left, mouth_x_right, mouth_y + mouth_line_width, mouth_y - mouth_line_width, 
             0, color, outline=True, outline_width=fine_line_width
