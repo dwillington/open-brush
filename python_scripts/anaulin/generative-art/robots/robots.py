@@ -1,20 +1,4 @@
 
-# import sys
-# import os
-# sys.path.append(os.path.abspath('..'))
-
-# from lib import colors, palettes
-# import random
-# import socket
-# from lib import colors
-# from lib import palettes
-# import math
-# from math import pi
-
-# sys.path.append(os.path.abspath('../../../'))
-# import ob_helper
-# from ob_helper import Point as ob_Point
-
 import sys
 import os
 sys.path.append(os.path.abspath('..'))
@@ -25,56 +9,18 @@ import socket
 from lib import colors
 from lib import palettes
 import math
-from math import pi
+from ob import ob
 
-sys.path.append(os.path.abspath('../../../'))
-import ob_helper
-from ob_helper import Point as ob_Point
 
 Y_OFFSET = 0
-
-
+SCALER = 1
 def getDPC(point, Z=0):
-    SCALER = 1
-    return f"{point[0]*SCALER},{(point[1]*SCALER)+Y_OFFSET},{Z}"
-
-
-def draw_path(points, X_OFFSET, Y_OFFSET, ORIGIN_COMPRESS, SINGLE_DRAW_PATH=False):
-    if SINGLE_DRAW_PATH:
-        draw__path = "draw.path="
-        for i in range(0, len(points)):
-            points[i].origin_compress(ORIGIN_COMPRESS)
-            points[i].set_X_offset(X_OFFSET)
-            points[i].set_Y_offset(Y_OFFSET)
-
-            draw__path += f"{points[i].get_3d_coordinates()},"
-            # TODO: TRIED USING PUT WHICH SHOULD HAVE NO LIMIT, THIS IS PROBABLY HAPPENING AT THE OB LEVEL, SO JUST SEND SMALLER STRINGS
-            # SEND DRAW.PATH EVERY X ITERATIONS OR SO OTHERWISE IT BECOMES TOO LONG AND GETS TRUNCATED
-            if i > 0 and (i % 10 == 0):
-                ob_helper.sendCommands([draw__path])
-                draw__path = f"draw.path={points[i].get_3d_coordinates()},"
-
-        if len(points) % 10 != 0:  # DRAW REMAINING POINTS
-            ob_helper.sendCommands([draw__path])
-        # ob_helper.putCommands({"draw.path": draw__path})
-        print(len(draw__path))
-    else:
-        # DRAW.PATH LINE SEGMENTS
-        points[0].origin_compress(ORIGIN_COMPRESS)
-        points[0].set_X_offset(X_OFFSET)
-        points[0].set_Y_offset(Y_OFFSET)
-        for i in range(0, len(points)-1):
-            points[i+1].origin_compress(ORIGIN_COMPRESS)
-            points[i+1].set_X_offset(X_OFFSET)
-            points[i+1].set_Y_offset(Y_OFFSET)
-            draw__path = f"draw.path={points[i].get_3d_coordinates()},{points[i+1].get_3d_coordinates()}"
-            ob_helper.sendCommands([draw__path])
+    return f"{round(point[0]*SCALER,2)},{round((point[1]*SCALER)+Y_OFFSET,2)},{round(Z*SCALER,2)}"
 
 
 """
 https://pycairo.readthedocs.io/en/latest/reference/context.html
 """
-
 
 class Context:
 
@@ -88,16 +34,13 @@ class Context:
 
     def line_to(self, x: float, y: float):
         current_position = self.position[-1]  # LAST ELEMENT IN LIST
-        ob_helper.sendCommands(["brush.type=Light"])
-        ob_helper.sendCommands(
-            [f"draw.path=[{getDPC(current_position)}],[{getDPC([x,y])}]"])
+        ob.brush.type(f"Light")
+        draw__path = f"[{getDPC(current_position)}],[{getDPC([x,y])}]"
+        ob.draw.path(f"{draw__path}")
         del self.position[-1]  # DELETE LAST ELEMENT IN LIST
 
     def set_line_width(self, width: float):
-        ob_helper.sendCommands([f"brush.size.set={width}"])
-
-    def set_source_rgb(self, red: float, green: float, blue: float):
-        ob_helper.sendCommands([f"color.set.rgb={red},{blue},{green}"])
+        ob.brush.size.set(f"{width}")
 
     def stroke(self):
         return
@@ -109,16 +52,17 @@ class Context:
         # print(f"angle1:{angle1}")
         # print(f"angle2:{angle2}")
 
-        ob_helper.sendCommands([f"brush.transform.push"])
-        ob_helper.sendCommands(
-            [f"brush.move.to={xc},{yc},0", "brush.look.forwards"])
-        ob_helper.sendCommands([f"brush.size.set={brush_width}"])
-        ob_helper.sendCommands([f"draw.polygon=12,{radius},0"])
-        ob_helper.sendCommands([f"brush.transform.pop"])
-        ob_helper.sendCommands([f"brush.size.set=0.1"])
+        ob.brush.transform.push()
+        ob.brush.move.to(f"{xc},{yc},0")
+        ob.brush.look.forwards()
+        ob.brush.size.set(f"{brush_width}")
+        ob.draw.polygon(12, radius, 0)
+        ob.brush.transform.pop()
+        ob.brush.size.set(0.1)
 
 
 def draw_robot(ctx, x, y, x2, y2, palette):
+
     # print(f"x:{x}")
     # print(f"y:{y}")
     # margin = int(min(x2 - x, y2 - y) / 20)
@@ -126,13 +70,15 @@ def draw_robot(ctx, x, y, x2, y2, palette):
     antenna_height = draw_antennas(ctx, x, y, x2, y2, margin, palette)
     face_top = y2 - margin - antenna_height
     face_bottom = y + margin
+    # print(f"face_top:{face_top}")
+    # print(f"face_bottom:{face_bottom}")
 
     # Face.
     face_hex = random.choice(palette['colors'])
     non_face_palette = [c for c in palette['colors'] if c != face_hex]
     face_color = palettes.hex_to_tuple(face_hex)
     face_radius = 0  # random.randint(margin, 5 * margin)
-    ob_helper.sendCommands(["brush.type=Light"])
+    ob.brush.type(f"Light")
     draw_rounded_rect(ctx, x + margin, x2 - margin, face_top, face_bottom,
                       face_radius, face_color, outline=True)
 
@@ -142,33 +88,33 @@ def draw_robot(ctx, x, y, x2, y2, palette):
 
     # Mouth
     mouth_color = palettes.hex_to_tuple(random.choice(non_face_palette))
-    ob_helper.sendCommands(["brush.type=Light"])
+    ob.brush.type(f"Light")
     draw_mouth(ctx, x, x2, face_top, face_bottom, margin, mouth_color)
 
     draw_screws(ctx, x, x2, face_top, face_bottom, margin)
-
+    ob.brush.type(f"Light")
     draw_ears(ctx, x, x2, face_top, face_bottom, face_color, margin)
 
 
 def draw_ears(ctx, x, x2, face_top, face_bottom, face_color, margin):
     # This matches the eye_x
-    ear_top = face_top + (face_bottom - face_top) / 3
+    ear_bottom = face_top - (face_top - face_bottom) / 2.5
     ear_width = random.uniform(0.5, 1.5)
-    # ear_height = (face_top - ear_top - margin) / random.randint(1, 2)
-    ear_height = (face_top - ear_top - margin) / random.randint(2, 5)
-    if random.randint(1, 10) <= 10:
+    # ear_height = (face_top - ear_bottom - margin) / random.randint(1, 2)
+    ear_height = random.randint(2, 5)
+    if True:
         draw_rounded_rect(ctx,
                           x + margin - ear_width,
-                          x + margin + 0.1,  # a bit of fuzz to make sure it connects, in case of very rounded faces
-                          ear_top,
-                          ear_top + ear_height,
-                          1, face_color)
+                          x + margin - 0.1,  # a bit of fuzz to make sure it connects, in case of very rounded faces
+                          ear_bottom + ear_height,
+                          ear_bottom,
+                          0, face_color)
         draw_rounded_rect(ctx,
                           (x2 - margin) + 0.1,
                           (x2 - margin) + ear_width,
-                          ear_top,
-                          ear_top + ear_height,
-                          1, face_color)
+                          ear_bottom + ear_height,
+                          ear_bottom,
+                          0, face_color)
 
 
 def draw_screws(ctx, x, x2, face_top, face_bottom, margin):
@@ -188,13 +134,13 @@ def draw_screw(ctx, x, y, radius, margin):
     # ctx.rotate(pi / 4)
 
     # Grey circle
-    ctx.set_source_rgb(*palettes.hex_to_tuple('#acb4bf'))
-    ctx.arc(x, y, radius, 0, 2 * pi)
+    ob.color.set.html("acb4bf")
+    ctx.arc(x, y, radius, 0, 2 * math.pi)
     # ctx.fill()
 
     # Outline
-    ctx.set_source_rgb(0, 0, 0)
-    ctx.arc(x, y, radius+0.2, 0, 2 * pi)
+    ob.color.set.rgb(f"0,0,0")
+    ctx.arc(x, y, radius+0.2, 0, 2 * math.pi)
     ctx.set_line_width(0.2)
     # ctx.stroke()
 
@@ -249,9 +195,8 @@ def draw_mouth(ctx, x, x2, face_top, face_bottom, margin, color):
     else:
         fine_line_width = mouth_line_width // 9
         draw_rounded_rect(
-            ctx, mouth_x_left, mouth_x_right, mouth_y -
-            mouth_line_width, mouth_y + mouth_line_width, 0, color,
-            outline=True, outline_width=fine_line_width
+            ctx, mouth_x_left, mouth_x_right, mouth_y + mouth_line_width, mouth_y - mouth_line_width, 
+            0, color, outline=True, outline_width=fine_line_width
         )
         tooth_interval = (mouth_x_right - mouth_x_left) // 5
         for x in range(int(mouth_x_left + tooth_interval), int(mouth_x_right - tooth_interval + 2), int(tooth_interval)):
@@ -265,15 +210,6 @@ def draw_mouth(ctx, x, x2, face_top, face_bottom, margin, color):
                   mouth_y, fine_line_width, (0, 0, 0))
 
 
-def draw_line(ctx, x1, y1, x2, y2, line_width, color):
-    ctx.set_source_rgb(*color)
-    ctx.move_to(x1, y1)
-    ctx.set_line_width(0.1)
-    ctx.line_to(x2, y2)
-    # ctx.set_line_cap(cairo.LINE_CAP_ROUND)
-    # ctx.stroke()
-
-
 def draw_eyes(ctx, x, x2, face_top, face_bottom, margin, color):
     eye_y = face_top - (face_top - face_bottom) / 3
     eye_x1 = (x2 - x - 2 * margin) / 3 + x + margin
@@ -285,26 +221,41 @@ def draw_eyes(ctx, x, x2, face_top, face_bottom, margin, color):
     pupil_radius_factor = random.uniform(2, 5)
     make_pupil = random.randint(1, 10) >= 5
     make_double_pupil = random.randint(1, 10) >= 5
-    ob_helper.sendCommands(["brush.type=ShinyHull"])
-    for x in [eye_x1, eye_x2]:
-        modified_eye_radius = random.uniform(
-            0.8 * eye_radius_base, 1.5 * eye_radius_base)
-        ctx.set_source_rgb(*color)
-        ctx.arc(x, eye_y, modified_eye_radius, 0, 2 * pi, brush_width=1)
-        # ctx.fill()
-        if make_pupil:
-            ctx.set_source_rgb(0, 0, 0)
-            ctx.arc(x, eye_y, modified_eye_radius *
-                    (1 - 1 / pupil_radius_factor), 0, 2 * pi, brush_width=1)
-            # ctx.fill()
-        if make_double_pupil:
-            ctx.set_source_rgb(1, 1, 1)
-            ctx.arc(x, eye_y, (modified_eye_radius *
-                    (1 - 1 / pupil_radius_factor)) / 2, 0, 2 * pi, brush_width=1)
-            # ctx.fill()
+    ob.brush.type("ShinyHull")
+    if random.randint(1, 10) <= 10:
+      for x in [eye_x1, eye_x2]:
+          modified_eye_radius = random.uniform(
+              0.8 * eye_radius_base, 1.5 * eye_radius_base)
+          ob.color.set.rgb(','.join(map(str, color)))
+          ctx.arc(x, eye_y, modified_eye_radius, 0, 2 * math.pi, brush_width=1)
+          # ctx.fill()
+          if make_pupil:
+              ob.color.set.rgb("0,0,0")
+              ctx.arc(x, eye_y, modified_eye_radius *
+                      (1 - 1 / pupil_radius_factor), 0, 2 * math.pi, brush_width=1)
+              # ctx.fill()
+          if make_double_pupil:
+              ob.color.set.rgb("1,1,1")
+              ctx.arc(x, eye_y, (modified_eye_radius *
+                      (1 - 1 / pupil_radius_factor)) / 2, 0, 2 * math.pi, brush_width=1)
+              # ctx.fill()
+      if make_double_pupil == False:
+        ob.brush.type("Icing")
+        randomColor = format(random.randint(0, 16777215), 'x')
+        ob.color.set.html(randomColor)
+        for x in [eye_x1, eye_x2]:
+          x0 = x
+          y0 = eye_y
+          ob.brush.transform.push()
+          ob.brush.move.to(f"{x0},{y0},0")
+          ob.brush.look.right()
+          cone(eye_radius_base)
+          ob.brush.transform.pop()
 
 
 def draw_antennas(ctx, x, y, x2, y2, margin, palette):
+    print(f"x,y:{x},{y}")
+    print(f"x2,y2:{x2},{y2}")
     antenna_color = palettes.hex_to_tuple(random.choice(palette['colors']))
     antenna_height = random.randint(
         (y2 - y - 2 * margin) // 6, (y2 - y - 2 * margin) // 3)
@@ -314,33 +265,116 @@ def draw_antennas(ctx, x, y, x2, y2, margin, palette):
     for i in range(antenna_count):
         antenna_width = random.uniform(0.1, 0.5)
         antenna_x = x + margin + antenna_interval * (i + 1)
-        ctx.move_to(antenna_x, antenna_bottom)
-        ctx.set_source_rgb(*antenna_color)
-        ctx.line_to(antenna_x, antenna_bottom + antenna_height + margin)
-        # ctx.set_line_cap(cairo.LINE_CAP_ROUND)
+        ob.color.set.rgb(','.join(map(str, antenna_color)))
+        # ctx.move_to(antenna_x, antenna_bottom)
+        # ctx.line_to(antenna_x, antenna_bottom + antenna_height + margin)
+        ob.brush.type(f"Light")
+        draw_line(ctx, antenna_x, antenna_bottom, antenna_x, antenna_bottom + antenna_height + margin, random.uniform(3, 5), antenna_color)
         ctx.set_line_width(antenna_width)
         # ctx.stroke()
         if random.randint(1, 10) <= 10:
-            ob_helper.sendCommands(["brush.type=MatteHull"])
+            ob.brush.type(f"MatteHull")
             ctx.arc(
                 antenna_x,
                 antenna_bottom + antenna_height + margin,
                 random.uniform(antenna_width * 2, antenna_width * 5)*0.25,
-                0, 2*pi, brush_width=(antenna_width*2)
+                0, 2*math.pi, brush_width=(antenna_width*2)
             )
-            ob_helper.sendCommands(["brush.type=Waveform"])
+            ob.brush.type(f"Waveform")
             ctx.arc(
                 antenna_x,
                 antenna_bottom + antenna_height + margin,
                 random.uniform(antenna_width * 2, antenna_width * 5),
-                0, 2*pi, brush_width=(antenna_width*2)
+                0, 2*math.pi, brush_width=(antenna_width*2)
             )
             # ctx.set_source_rgb(*antenna_color)
             # ctx.fill()
     return antenna_height
 
 
+def draw_line(ctx, x1, y1, x2, y2, line_width, color):
+    ob.color.set.rgb(','.join(map(str, color)))
+    ob.brush.size.set(f"{line_width}")
+    Z_OFFSET = 0
+    A = getDPC([x1, y1], Z_OFFSET)
+    B = getDPC([x2, y2], Z_OFFSET)
+    ob.draw.path(f"[{A}],[{B}]")
+
+
+CONE_X_ROTATION = 0
+CONE_Y_ROTATION = 0
+CONE_Z_ROTATION = 0
+def cone(radius, rotations=30):
+  ob.brush.turn.x(CONE_X_ROTATION)
+  ob.brush.turn.y(CONE_Y_ROTATION)
+  ob.brush.turn.z(CONE_Z_ROTATION)
+  for i in range(rotations):
+    ob.draw.polygon(3, radius, 0)
+    ob.brush.turn.x(6)
+
+
+"""
+https://lydxlx1.github.io/blog/2020/05/16/circle-passing-2-pts-with-fixed-r/
+"""
+def centers_of_circles(x1, y1, x2, y2, r):
+    q = ((x2 - x1) ** 2 + (y2 - y1) ** 2) ** 0.5
+    x3 = (x1 + x2) / 2
+    y3 = (y1 + y2) / 2
+
+    xx = (r ** 2 - (q / 2) ** 2) ** 0.5 * (y1 - y2) / q
+    yy = (r ** 2 - (q / 2) ** 2) ** 0.5 * (x2 - x1) / q
+    return ((x3 + xx, y3 + yy), (x3 - xx, y3 - yy))
+
+def draw_rounded_corner(left, right, top, bottom, rounded=True):
+    points = []
+    if (rounded != True) or (abs(right - left) <= 1) or (abs(top - bottom) <= 1): # TOO CLOSE, DRAW SHARP SQUARE
+      points = [[left,top],[right,top],[right,bottom],[left,bottom]]
+    else:
+      x = left
+      y = top
+      A1 = [x      , y-0.5]
+      A2 = [x+0.125, y-0.25]
+      A3 = [x+0.25 , y-0.125]
+      A4 = [x+0.5  , y]
+      points.append(A1)
+      points.append(A2)
+      points.append(A3)
+      points.append(A4)
+
+      #########################
+      # CONVERT B,C,D TO ROUNDED
+      #########################
+      
+      x = right
+      y = top
+      points.append([x,y])
+      x = right
+      y = bottom
+      points.append([x,y])
+      x = left
+      y = bottom
+      points.append([x,y])
+
+    return points
+
+    # ob.brush.transform.push()
+    # ob.brush.move.to(f"{getDPC(A1)}")
+    # ob.brush.draw(1)
+    # ob.brush.move.to(f"{getDPC(A2)}")
+    # ob.brush.draw(1)
+    # c1, c2 = centers_of_circles(A1[0],A1[1],A2[0],A2[1], 5)
+    # ob.brush.move.to(f"{getDPC(c1)}")
+    # ob.brush.draw(1)
+    # print(c1)
+    # print(c1)
+    # angle1 = math.degrees(math.atan2(float(c1[1]-A1[1]), float(c1[0]-A1[0])))
+    # angle2 = math.degrees(math.atan2(float(c1[1]-A2[1]), float(c1[0]-A2[0])))
+    # print(f"angle1:{angle1}")
+    # print(f"angle2:{angle2}")
+    # ob.brush.transform.pop()
+
 def draw_rounded_rect(ctx, left, right, top, bottom, radius, color, outline=False, outline_width=0.1):
+    # print(left, right, top, bottom)
     """ draws rectangles with rounded (circular arc) corners """
     # ctx.arc(left + radius, top + radius, radius, 2*(pi/2), 3*(pi/2))
     # ctx.arc(right - radius, top + radius, radius, 3*(pi/2), 4*(pi/2))
@@ -348,20 +382,25 @@ def draw_rounded_rect(ctx, left, right, top, bottom, radius, color, outline=Fals
     # ctx.arc(left + radius, bottom - radius, radius, 1*(pi/2), 2*(pi/2))
     # ctx.close_path()
     # ctx.fill()
-    ctx.set_source_rgb(*color)
+    ob.color.set.rgb(','.join(map(str, color)))
 
     Z_OFFSET = 0.0
-    A = getDPC([left + radius, top - radius], Z_OFFSET)
-    B = getDPC([right - radius, top - radius], Z_OFFSET)
-    C = getDPC([right - radius, bottom + radius], Z_OFFSET)
-    D = getDPC([left + radius, bottom + radius], Z_OFFSET)
+    POINTS = draw_rounded_corner(left + radius, right - radius, top - radius, bottom + radius, True)
+    ROUNDED_POINTS = ""
+    for point in POINTS:
+      ROUNDED_POINTS += f"[{getDPC(point, Z_OFFSET)}],"
+    # print(ROUNDED_POINTS)
 
-    ob_helper.sendCommands(["brush.type=Diamond"])
-    ob_helper.sendCommands([f"draw.path=[{A}]," +
-                            f"[{B}]," +
-                            f"[{C}]," +
-                            f"[{D}]," +
-                            f"[{A}]"])
+    # A = getDPC([left + radius, top - radius], Z_OFFSET)
+    # B = getDPC([right - radius, top - radius], Z_OFFSET)
+    # C = getDPC([right - radius, bottom + radius], Z_OFFSET)
+    # D = getDPC([left + radius, bottom + radius], Z_OFFSET)
+
+    ob.brush.type(f"Diamond")
+    ROUNDED_POINTS += f"[{getDPC(POINTS[0], Z_OFFSET)}],"
+    draw__path = (f"{ROUNDED_POINTS}")
+    print(draw__path)
+    ob.draw.path(f"{draw__path}")
 
     if outline:
         # ctx.arc(left + radius, top + radius, radius, 2*(pi/2), 3*(pi/2))
@@ -370,7 +409,7 @@ def draw_rounded_rect(ctx, left, right, top, bottom, radius, color, outline=Fals
         # ctx.arc(left + radius, bottom - radius, radius, 1*(pi/2), 2*(pi/2))
         # ctx.close_path()
         # ctx.set_line_width(outline_width)
-        ctx.set_source_rgb(0, 0, 0)
+        ob.color.set.rgb("0,0,0")
 
         radius = 0.2
         Z_OFFSET = 0.0
@@ -379,24 +418,27 @@ def draw_rounded_rect(ctx, left, right, top, bottom, radius, color, outline=Fals
         C = getDPC([right - radius, bottom + radius], Z_OFFSET)
         D = getDPC([left + radius, bottom + radius], Z_OFFSET)
 
-        ob_helper.sendCommands(["brush.type=Light"])
-        ob_helper.sendCommands([f"draw.path=[{A}],[{B}]"])
-        ob_helper.sendCommands([f"draw.path=[{B}],[{C}]"])
-        ob_helper.sendCommands([f"draw.path=[{C}],[{D}]"])
-        ob_helper.sendCommands([f"draw.path=[{D}],[{A}]"])
+        ob.brush.type(f"Light")
+        ob.draw.path(f"[{A}],[{B}]")
+        ob.draw.path(f"[{B}],[{C}]")
+        ob.draw.path(f"[{C}],[{D}]")
+        ob.draw.path(f"[{D}],[{A}]")
 
         # ctx.stroke()
 
 
 def main(filename="output.png", img_width=2000, img_height=2000, count=5, palette=random.choice(palettes.PALETTES)):
     if "OB_HOST" in os.environ:
-        ob_helper.ob_host = os.environ['OB_HOST']
-    ob_helper.sendCommands(["new"])
-    ob_helper.sendCommands(["brush.move.to=0,0,0", "brush.look.up"])
-    # ob_helper.sendCommands(["user.move.to=-10,5,30"])
-    ob_helper.sendCommands(["user.move.to=-25,5,30"])
-    ob_helper.sendCommands(["brush.size.set=0.1"])
-    ob_helper.sendCommands(["brush.type=Light"])
+      ob.OB_HOST = os.environ['OB_HOST']
+    ob.new()
+    ob.brush.move.to(f"0,0,0")
+    ob.brush.look.up()
+    if "OB_HOST" in os.environ:
+      ob.user.move.to(f"-10,5,20")
+    else:
+      ob.user.move.to(f"-25,5,30")
+    ob.brush.size.set(0.1)
+    ob.brush.type(f"Light")
 
     while len(palette['colors']) < 3:
         print(f"Palette {palette} has too few colors. Choosing another one.")
