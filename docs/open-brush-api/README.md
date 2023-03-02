@@ -35,6 +35,17 @@ Draws a path at the current brush position \[\[x1,y1,z1],\[x2,y2,z2], etc...]. D
 ___
 NOTE: 
 <br />
+More importantly, draws a path RELATIVE to the current brush position.
+```
+move.to="1,1,0"
+draw.path=[0,0,0],[1,0,0]
+```
+The above will draw a line segment from [1,1,0] to [2,1,0]
+<br />
+NOTE: brush.turn. will NOT change the default orientation during draw.path commands. You would use brush.draw for to draw in the direction where the brush x,y,z vectors point.
+<br />
+https://www.evl.uic.edu/ralph/508S98/coordinates.html#:~:text=The%20default%20coordinate%20system%20in%20OpenGL(TM)%20is%20right%2D,about%20the%20axis%20of%20rotation.
+<br />
 If you draw more than one line segment in a path, with 90 degree or "sharp turns", you may intermittently get non linear "connections". For e.g. here I intended to a draw square (ignore the "dot" from Monoscopic Mode):
 ```
 draw.path=[0,0,0],[1,0,0],[1,1,0],[0,1,0],[0,0,0]
