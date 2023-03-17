@@ -8,33 +8,15 @@ Parameters = {
 }
 
 function getCG1()
-    local mcg = { "fafa6e",
-        "e5f56f",
-        "d1f072",
-        "bdea75",
-        "aae479",
-        "98de7c",
-        "86d780",
-        "75d084",
-        "64c987",
-        "54c18a",
-        "44b98d",
-        "34b28e",
-        "23aa8f",
-        "10a18f",
-        "00998f",
-        "00918d",
-        "00898a",
-        "008087",
-        "007882",
-        "0d707d",
-        "176877",
-        "1f5f70",
-        "245769",
-        "285061",
-        "2a4858",
+    local all = {
+      {"6e7bfa", "7f76f7", "8f71f3", "9d6bef", "aa65ea", "b65fe4", "c258dd", "cc50d6", "d647ce", "df3ec5", "e733bc", "ee27b2", "f516a8", "fa009d", "ff0092", "ff0087", "ff007c", "ff0070", "ff0064", "ff0058", "ff004c", "ff0040", "ff0033", "ff0025", "fe0713",},
+      {"fafa6e", "e5f56f", "d1f072", "bdea75", "aae479", "98de7c", "86d780", "75d084", "64c987", "54c18a", "44b98d", "34b28e", "23aa8f", "10a18f", "00998f", "00918d", "00898a", "008087", "007882", "0d707d", "176877", "1f5f70", "245769", "285061", "2a4858",},
+      {"fa6eee", "f867df", "f560cf", "f359be", "f052ac", "ec4c9a", "e94587", "e53f74", "e23a61", "dd344d", "d92f3a", "d42e2a", "c93d2c", "bf492d", "b4532e", "aa5b2e", "a0622f", "96662f", "8d692f", "836a2f", "7a6a2e", "71692e", "69662d", "5e602b", "52582a",},
+      {"720c6e", "671c77", "5a277f", "4b2f85", "39368b", "1f3c8e", "004190", "004591", "004990", "004c8e", "004e8b", "005186", "005281", "00547b", "005575", "00566e", "005767", "005860", "00585a", "005853", "00594d", "005948", "085943", "1d583e", "2a583b",},
+      {"1613a4", "4e00a0", "6d009b", "850095", "9a008f", "ac0087", "bc0080", "c90078", "d50070", "e00068", "e80061", "ef2559", "f53a53", "f94d4c", "fd5d46", "fe6d41", "ff7c3d", "ff8a3a", "fe9839", "fca63a", "fab33e", "f7c044", "f3cd4c", "efd957", "eae563",},
     }
-    return mcg
+    local rand_choice = all[ math.random( #all ) ]
+    return rand_choice
 end
 
 function getCGExpanded(colors)
@@ -56,14 +38,42 @@ function getCG2()
 end
 
 function getCG3()
-    randColor1 = rgbToHex(math.random(63), math.random(63), math.random(63))
-    randColor2 = rgbToHex(math.random(255), math.random(255), math.random(255))
+    local randColor1 = rgbToHex(math.random(63), math.random(63), math.random(63))
+    local randColor2 = rgbToHex(math.random(255), math.random(255), math.random(255))
     randColor1 = "03071e"
     randColor2 = "ffba08"
     -- print(randColor1)
     -- print(randColor2)
     local mcg = colorGradient(randColor1, randColor2, 20)
     return mcg
+end
+
+function getRandCG()
+    local mcg = {}
+    local cgChoice = math.random(3)
+    -- print(cgChoice)
+    if cgChoice == 1 then
+        mcg = getCG1()
+    elseif cgChoice == 2 then
+        mcg = getCG2()
+    else
+        mcg = getCG3()
+    end
+    return mcg
+end
+
+function getNextColor()
+    -- brush.colorHtml = lighten_color(brush.colorHtml, 1)
+    local newColor = myColorGradient[colorIndex]
+    colorIndex = colorIndex + colorIndexDirection
+
+    if colorIndex == #myColorGradient then
+        colorIndexDirection = -1
+    elseif colorIndex == 1 then
+        colorIndexDirection = 1
+    end
+
+    return newColor
 end
 
 function Start()
@@ -78,25 +88,14 @@ function OnTriggerPressed()
     }
     currentPos = initialPos
 
+    -- myColorGradient = getRandCG()
+    myColorGradient = getCG1()
+    colorIndexDirection = 1
+    colorIndex = 1
+
     --Store the brush transform
     drawingPosition = brush.position
     currentRotation = brush.rotation
-
-
-    -- brush.colorHtml = randColor1
-
-    myColorGradient = {}
-    cgChoice = math.random(3)
-    print(cgChoice)
-    if cgChoice == 1 then
-        myColorGradient = getCG1()
-    elseif cgChoice == 2 then
-        myColorGradient = getCG2()
-    else
-        myColorGradient = getCG3()
-    end
-
-    colorIndex = 1
 
     return { drawingPosition, currentRotation }
 end
@@ -121,9 +120,8 @@ function WhileTriggerPressed()
         -- turtle.lookAt({brush.position.x+1,brush.position.y+1,brush.position.z,})
         -- brush.colorHtml = lighten_color(brush.colorHtml, 1)
         -- newColor = cg1[colorIndex]
-        newColor = myColorGradient[colorIndex]
+        local newColor = getNextColor()
         brush.colorHtml = newColor
-        colorIndex = colorIndex + 1
         -- print(brush.colorHtml)
         DrawShape(sides, r)
     end
