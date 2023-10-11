@@ -25,4 +25,11 @@ nohup /mnt/c/Users/root/idle-shutdown.sh &> /tmp/idle-shutdown.log
 gcloud compute instances stop ...
 ```
 
+### How to setup monoscopic on a remote ubuntu instance (i.e. no local gpu)
+
+https://ubuntu.com/blog/launch-ubuntu-22-04-desktop-on-google-cloud
+
+http://wearcam.org/abaq/openbrush/
+
+
 
