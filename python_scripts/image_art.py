@@ -1,4 +1,7 @@
 # PATH=/c/tools/python-3.11.0rc2-embed-amd64:$PATH
+import os
+from ob import ob
+import argparse
 import urllib
 import random
 from PIL import Image
@@ -8,10 +11,6 @@ import imageio
 import matplotlib
 import sys
 
-def clearScene():
-  ob_helper.sendCommands(["new"])
-  ob_helper.sendCommands(["brush.move.to=0,0,0","brush.look.up"])
-  # ob_helper.sendCommands(["user.move.to=0,0," + str(20)])
 
 def drawMindMap():
   ob_helper.sendCommands(["user.move.to=0,0,20"])
@@ -27,15 +26,14 @@ def drawMindMap():
     "Word Search Puzzles in OB anyone?",
     "Sudoku in OB anyone?",
     ]
+  ob.brush.move.to(f"{str(START_X)},{str((START_Y - (i*2)))},{str(START_Z)}")
   for i in range(0, len(mind_map_ideas)):
-     print(mind_map_ideas[i])
-     text = urllib.parse.quote_plus(mind_map_ideas[i])
-     # randomColor = str(hex(random.randint(0,16777215)))
-     randomColor = format(random.randint(0,16777215),'x')
-     commandStrings.append(
-       "brush.move.to=" + str(START_X) + "," + str((START_Y - (i*2))) + "," + str(START_Z) + 
-       "&color.set.html=" + randomColor + "&draw.text=" + text)
-  ob_helper.sendCommands(commandStrings)
+    text = urllib.parse.quote_plus(mind_map_ideas[i])
+    print(text)
+    # randomColor = str(hex(random.randint(0,16777215)))
+    randomColor = format(random.randint(0,16777215),'x')
+    ob.color.set.html(randomColor)
+    ob.draw.text(text)
 
 # def rgb_to_hex(r, g, b):
   # return ('{:X}{:X}{:X}').format(r, g, b)
@@ -104,42 +102,68 @@ def drawRandomPath():
   ob_helper.sendCommands([cs])
 
 
+def pipa():
+  poem = [
+    "See the Turtle of enormous girth!",
+    "On his shell he holds the earth,",
+    "His though is slow but always kind,",
+    "He holds us all within his mind."
+  ]
+  
+  y = 14
+  ob.brush.move.to(f"0,{y},10")
+  ob.model.import_("animal_turtle_loggerhead_sea_turtle.glb")
+  y = 20
+  for i in range(len(poem)):
+    verse = urllib.parse.quote_plus(poem[i])
 
-########################################
-# main()
-########################################
+    print(verse)
+    v = len(verse)
+    x = -v/2
+    y = y - 2
+    ob.brush.move.to(f"{x},{y},24")
+    ob.draw.text(verse)
 
-START_X = -15
-START_Y = 22
-START_Z = 0
 
-hostname = socket.gethostname()
-if(hostname == "centos7.linuxvmimages.local"):
-  ob_helper.ob_host="10.0.2.2"
+def main():
+  if "OB_HOST" in os.environ:
+    ob.OB_HOST = os.environ['OB_HOST']
+  ob.new()
+  ob.brush.type("Light")
 
-clearScene()
+  START_X = -15
+  START_Y = 22
+  START_Z = 0
 
-for i in range(1, len(sys.argv)):
-  # print('argument:', i, 'value:', sys.argv[i])
-  if    (sys.argv[i] == "drawImage"):
-    drawImage(sys.argv[i+1])
-  elif (sys.argv[i] == "drawRandomPath"):
+  hostname = socket.gethostname()
+  if(hostname == "centos7.linuxvmimages.local"):
+    ob_helper.ob_host="10.0.2.2"
+
+  parser = argparse.ArgumentParser()
+  parser.add_argument("--drawImage")
+  parser.add_argument("--drawRandomPath", action="store_true")
+  parser.add_argument("--drawMindMap", action="store_true")
+  parser.add_argument("--pipa", action="store_true")
+
+  args = parser.parse_args()
+  # print(args)
+  if args.drawImage is not None:
+    drawImage(args.drawImage)
+  elif args.drawRandomPath:
     drawRandomPath()
-  elif (sys.argv[i] == "drawMindMap"):
+  elif args.drawMindMap:
     drawMindMap()
+  elif args.pipa:
+    pipa()
+
+  return
 
 
-# drawMindMap()
-
-
-
-
-
-
+if __name__ == '__main__':
+    main()
 
 
 # sendCommands(["http://127.0.0.1:40074/api/v1?draw.text=a"]);
-
 
 
 # python3 -m virtualenv env

@@ -190,6 +190,9 @@ class ob:
             urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?layer.toggle={layer}")
     class model:
         @staticmethod
+        def import_(location):
+            urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?model.import={location}")
+        @staticmethod
         def position(index, position):
             urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?model.position={index},{position}")
     class guide:
