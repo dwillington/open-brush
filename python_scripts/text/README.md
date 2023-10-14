@@ -8,7 +8,7 @@ I then parse the svg paths and send them to Open Brush via draw.svg()
 
 ![image](https://github.com/dwillington/open-brush/assets/8038214/3ce6b034-d71b-4f0a-bb20-a073cd9ba41d)
 
-Unfortunately, they are not showing up correctly. Set aside the orientation or mirroring issues for now.
+Unfortunately, they are not showing up correctly. Set aside the orientation or mirroring issues for now. It's seems 70-80% there. Look how _beautiful_ those curves look, omg the possiblities.
 
 I tested the same svg path against an online visualizer and it shows up correctly.
 
@@ -22,7 +22,7 @@ q0 119 -128 207l-45 32v-461zM595 891v440q-74 -9 -121 -68t-47 -142q0 -108 126 -20
 ![image](https://github.com/dwillington/open-brush/assets/8038214/cb8f4d84-4b40-4237-b202-a1b7960cc74e)
 
 
-There are _thousands_ of amazing fonts I think would be cool to bring into Open Brush.
+There are _thousands_ of amazing fonts I think would be cool to bring into Open Brush. Eventually one could automate sizing / scaling, rotation, 3D block lettering, etc. (just some next step ideas)...
 
 ![image](https://github.com/dwillington/open-brush/assets/8038214/4d7ee655-e06f-4b6a-8117-0449bc7147ff)
 
