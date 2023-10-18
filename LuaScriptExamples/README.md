@@ -1,5 +1,11 @@
 # LuaScriptExamples
 
+Latest experiments-moonsharp builds for real-time scripting api branch:
+
+https://nightly.link/IxxyXR/open-brush/workflows/build/experiments%2Fmoonsharp
+
+---
+
 [https://github.com/IxxyXR/open-brush/tree/experiments/moonsharp/Assets/Resources/LuaScriptExamples](https://github.com/IxxyXR/open-brush/tree/experiments/moonsharp/Assets/Resources/LuaScriptExamples)
 
 Please direct all praise and blame at original author at link above, jk.
