@@ -106,8 +106,12 @@ def pipa():
   poem = [
     "See the Turtle of enormous girth!",
     "On his shell he holds the earth,",
-    "His though is slow but always kind,",
-    "He holds us all within his mind."
+    "His thought is slow but always kind,",
+    "He holds us all within his mind.",
+    "on his back the truth is carried,",
+    "and there are love and duty married",
+    "he loves the earth and loves the sea",
+    "and even loves a child like me",
   ]
   
   y = 14

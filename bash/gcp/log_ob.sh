@@ -1,0 +1,1 @@
+tail -100f ~/.config/unity3d/Icosa/Open\ Brush\ \(experiments_moonsharp\)/Player.log

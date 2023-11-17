@@ -3,6 +3,7 @@ from ob import ob
 import argparse
 from xml.dom import minidom
 import urllib
+import re
 
 def letters():
 
@@ -74,9 +75,17 @@ def text():
   doc = minidom.parse("LUCON.svg")  # parseString also exists
   glyphs = [path.getAttribute('d') for path in doc.getElementsByTagName('glyph')]
   
+  
   for g in glyphs:
     print(g)
     ob.new()
+    ob.brush.type("Light")
+    ob.brush.size.set(1)
+    ob.brush.size.add (0.5)
+    ob.brush.size.add (0.5)
+    ob.brush.size.add (0.5)
+    ob.brush.size.add (0.5)
+    ob.brush.move.to("0,20,0")
     ob.user.move.to("-15,0,20")
     ob.draw.svg(g.replace(" ", "%20"))
     
@@ -89,13 +98,14 @@ def main():
   if "OB_HOST" in os.environ:
     ob.OB_HOST = os.environ['OB_HOST']
   ob.brush.type("Light")
+  
+  # parser = argparse.ArgumentParser()
+  # parser.add_argument("--text", action="store_true")
+  # args = parser.parse_args()
+  # if args.text:
+    # text()
 
-  parser = argparse.ArgumentParser()
-  parser.add_argument("--text", action="store_true")
-  args = parser.parse_args()
-  if args.text:
-    text()
-
+  text()
 
 if __name__ == '__main__':
     main()
