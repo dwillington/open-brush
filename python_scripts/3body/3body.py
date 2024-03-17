@@ -82,28 +82,27 @@ def three_body():
     p2[i + 1] = p2[i] + v2[i] * delta_t
     p3[i + 1] = p3[i] + v3[i] * delta_t
 
-    if (i % 1000) == 0:
+    if (i % 5000) == 0:
       # print(p1[i+1])
       dpc_helper = ob_helper.DPC()
       p = -500
       n0 = dpc_helper.get(p1[i+p][0],p1[i+p][1],p1[i+p][2])
       n1 = dpc_helper.get(p1[i+1][0],p1[i+1][1],p1[i+1][2])
       draw_path=f"draw.path=[{n0}],[{n1}]"
-      print(draw_path)
       ob_helper.sendCommands([f"{draw_path}"])
 
 
-    if i > 2000: 
-      return
+    # if i > 2000: 
+      # return
 
 
 def main():
   if "OB_HOST" in os.environ:
     ob_helper.ob_host = os.environ['OB_HOST']
 
-  # ob_helper.sendCommands(["new"])
-  # ob_helper.sendCommands(["brush.move.to=0,0,0","brush.look.up"])
-  # ob_helper.sendCommands(["user.move.to=0,4,40"])
+  ob_helper.sendCommands(["new"])
+  ob_helper.sendCommands(["brush.move.to=0,0,0","brush.look.up"])
+  ob_helper.sendCommands(["user.move.to=0,4,40"])
 
   three_body()
 
