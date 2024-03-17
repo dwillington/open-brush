@@ -10,9 +10,9 @@ def three_body():
   # plt.style.use('dark_background')
 
   # masses of planets
-  m_1 = 10
-  m_2 = 20
-  m_3 = 30
+  m_1 = 15
+  m_2 = 15
+  m_3 = 15
 
   # starting coordinates for planets
   # p1_start = x_1, y_1, z_1
@@ -68,7 +68,7 @@ def three_body():
 
   v1[0], v2[0], v3[0] = v1_start, v2_start, v3_start
 
-  dpc_helper = ob_helper.DPC(scale=0.5)
+  dpc_helper = ob_helper.DPC(0.5,0,5)
 
   # evolution of the system
   for i in range(steps-1):
@@ -83,14 +83,33 @@ def three_body():
     p2[i + 1] = p2[i] + v2[i] * delta_t
     p3[i + 1] = p3[i] + v3[i] * delta_t
 
-    if (i % 5000) == 0:
+    step_size = 500
+    if (i % step_size) == 0:
       # print(p1[i+1])
-      p = -500
-      n0 = dpc_helper.get(p1[i+p][0],p1[i+p][1],p1[i+p][2])
-      n1 = dpc_helper.get(p1[i+1][0],p1[i+1][1],p1[i+1][2])
-      draw_path=f"draw.path=[{n0}],[{n1}]"
-      ob_helper.sendCommands([f"{draw_path}"])
 
+      def draw_orbit_segment(p1, i):
+        p = -step_size
+        np0 = dpc_helper.get(p1[i+p][0],p1[i+p][1]+1,p1[i+p][2])
+        np = dpc_helper.get(p1[i+p][0],p1[i+p][1],p1[i+p][2])
+        # n0 = "0,0,0"
+        n0 = dpc_helper.get(p1[i+1][0],p1[i+1][1]+1,p1[i+1][2])
+        n1 = dpc_helper.get(p1[i+1][0],p1[i+1][1],p1[i+1][2])
+
+        draw_path = f"draw.paths=[[{n0}],[{n1}]]"
+
+        draw_path = f"draw.paths=[[{n0}],[{n1}]],[[{np}],[{n1}]],[[{np0}],[{n0}]]"
+
+        ob_helper.sendCommands([f"{draw_path}"])
+        return draw_path
+      
+      ob_helper.sendCommands([f"color.set.html=red"])
+      draw_path = draw_orbit_segment(p1, i)
+
+      ob_helper.sendCommands([f"color.set.html=white"])
+      draw_path = draw_orbit_segment(p2, i)
+
+      ob_helper.sendCommands([f"color.set.html=blue"])
+      draw_path = draw_orbit_segment(p3, i)
 
     # if i > 2000: 
       # return
@@ -101,8 +120,9 @@ def main():
     ob_helper.ob_host = os.environ['OB_HOST']
 
   ob_helper.sendCommands(["new"])
-  ob_helper.sendCommands(["brush.move.to=0,0,0","brush.look.up"])
-  ob_helper.sendCommands(["user.move.to=0,4,40"])
+  ob_helper.sendCommands(["brush.type=Light"])
+  ob_helper.sendCommands(["brush.move.to=0,0,0"])
+  # ob_helper.sendCommands(["user.move.to=-60,4,80"])
 
   three_body()
 
