@@ -66,17 +66,14 @@ def fromDomeOutput():
 
 
 def main():
+  if "OB_HOST" in os.environ:
+    ob_helper.ob_host=os.environ['OB_HOST']
 
-    if "OB_HOST" in os.environ:
-      ob_helper.ob_host=os.environ['OB_HOST']
+  ob_helper.sendCommands(["new"])
+  ob_helper.sendCommands(["brush.move.to=0,0,0","brush.look.up"])
+  ob_helper.sendCommands(["user.move.to=0,4,40"])
 
-    ob_helper.sendCommands(["new"])
-    ob_helper.sendCommands(["brush.move.to=0,0,0","brush.look.up"])
-    ob_helper.sendCommands(["user.move.to=0,4,40"])
-
-    fromDomeOutput()
-
-
+  fromDomeOutput()
 
 if __name__ == '__main__':
-    main()
+  main()

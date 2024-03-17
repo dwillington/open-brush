@@ -29,6 +29,16 @@ def drawLineOB(p0, p1, scaler=100, generateRandomColor=False):
 def rgb_to_hex(r, g, b):
   return ('{:X}{:X}{:X}').format(r, g, b)
 
+class DPC:
+  def __init__(self, scaler=1, x_offset=0, y_offset=0, z_offset=0):
+    self.SCALER = scaler
+    self.X_OFFSET = x_offset
+    self.Y_OFFSET = y_offset
+    self.Z_OFFSET = z_offset
+
+  def get(self, x, y, z):
+    return f"{round((x*self.SCALER)+self.X_OFFSET,2)},{round((y*self.SCALER)+self.Y_OFFSET,2)},{round((z*self.SCALER)+self.Z_OFFSET,2)}"
+
 class Point:
 
     def __init__(self, x, y, z=0):
