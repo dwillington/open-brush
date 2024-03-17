@@ -68,6 +68,7 @@ def three_body():
 
   v1[0], v2[0], v3[0] = v1_start, v2_start, v3_start
 
+  dpc_helper = ob_helper.DPC(scale=0.5)
 
   # evolution of the system
   for i in range(steps-1):
@@ -84,7 +85,6 @@ def three_body():
 
     if (i % 5000) == 0:
       # print(p1[i+1])
-      dpc_helper = ob_helper.DPC()
       p = -500
       n0 = dpc_helper.get(p1[i+p][0],p1[i+p][1],p1[i+p][2])
       n1 = dpc_helper.get(p1[i+1][0],p1[i+1][1],p1[i+1][2])
