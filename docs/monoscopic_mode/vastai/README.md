@@ -1,3 +1,6 @@
+##### Using vastai platform to remotely access gpu based desktop for running Open Brush Monoscopic
+
+Allows for testing 3D generations via Open Brush API in Monoscopic Mode before moving to Open Brush VR.
 
 https://cloud.vast.ai/templates/
 1) Click Templates on Left
@@ -46,3 +49,31 @@ chmod a+x /opt/StandaloneLinux64-Monoscopic/OpenBrush-tempprexr2_Data
 ````
 
 ![image](https://github.com/dwillington/open-brush/assets/8038214/8b6ad107-bad4-4e8f-88b6-01d322554bab)
+
+By now you should have the option to "OPEN" the Desktop experience via browser. This can take 2-3 minutes to become available from initial instance creation, so be patient.
+
+![image](https://github.com/dwillington/open-brush/assets/8038214/e6e68fdc-02a2-4ea3-842b-7d3510e0ba61)
+
+1) Open Konsole Terminal and run "./OpenBrush-tempprexr2_Data" from "/opt/StandaloneLinux64-Monoscopic"
+
+![image](https://github.com/dwillington/open-brush/assets/8038214/833f3f52-0aeb-44ac-b630-e63b8ef0db6b)
+
+```
+# SEND SOME TEST COMMANDS
+cd ~/
+git clone https://github.com/dwillington/open-brush.git
+# SHELL SCRIPT TO SEND API COMMANDS TO MONOSCOPIC FROM SHELL
+/bin/cp -r open-brush/bash/ob.sh /usr/local/bin/ob
+ob new
+ob user.move.to=-10,10,20
+ob draw.text=hello
+ob viewonly.toggle
+```
+
+![image](https://github.com/dwillington/open-brush/assets/8038214/14e62b80-3154-4ded-b86a-9dd3d5a64870)
+
+If all goes well, it shoudl look like this...
+
+![image](https://github.com/dwillington/open-brush/assets/8038214/ff1def40-868b-4329-a3ed-3b4877ad6c70)
+
+
