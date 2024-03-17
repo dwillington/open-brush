@@ -45,7 +45,8 @@ $ssh_url # RUN SSH COMMAND TO CONNECT
 wget http://wearcam.org/abaq/openbrush/Linux%20Monoscopic%20Experimental.zip
 unzip 'Linux Monoscopic Experimental.zip' > /dev/null 2>&1
 mv StandaloneLinux64-Monoscopic/ /opt
-chmod a+x /opt/StandaloneLinux64-Monoscopic/OpenBrush-tempprexr2_Data
+# screen-fullscreen 0 OPTION IS USEFUL IN ALLOWING YOU TO ACCESS OS CONTROLS
+chmod a+x /opt/StandaloneLinux64-Monoscopic/OpenBrush-tempprexr2_Data screen-fullscreen 0
 ````
 
 ![image](https://github.com/dwillington/open-brush/assets/8038214/8b6ad107-bad4-4e8f-88b6-01d322554bab)
@@ -76,4 +77,24 @@ If all goes well, it shoudl look like this...
 
 ![image](https://github.com/dwillington/open-brush/assets/8038214/ff1def40-868b-4329-a3ed-3b4877ad6c70)
 
+Don't forget to visit the help page...
 
+![image](https://github.com/dwillington/open-brush/assets/8038214/83e33dad-a714-466e-8b9f-7dae2be35f01)
+
+
+
+
+To run some Python scripts in this repo...
+
+```
+apt install virtualenv -y
+virtualenv -p python3 ~/venv_3
+source ~/venv_3/bin/activate
+cd ~/open-brush/python_scripts
+pip install -r requirements.txt
+cd ~/open-brush/python_scripts/geoDome
+python geoDome.py
+```
+
+
+![image](https://github.com/dwillington/open-brush/assets/8038214/f5ef77cf-1701-45bd-bb2b-2d233d8cd6fe)
