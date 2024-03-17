@@ -20,7 +20,7 @@ mv StandaloneLinux64-Monoscopic/ /opt
 chmod a+x /opt/StandaloneLinux64-Monoscopic/OpenBrush-experimentsmoonsharp
 
 chmod a+x OpenBrush-tempprexr2
-./OpenBrush-tempprexr2 &
+./OpenBrush-tempprexr2 -screen-fullscreen 0 &
 ```
 
 
