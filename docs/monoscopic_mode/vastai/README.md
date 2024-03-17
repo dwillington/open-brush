@@ -98,3 +98,22 @@ python geoDome.py
 
 
 ![image](https://github.com/dwillington/open-brush/assets/8038214/f5ef77cf-1701-45bd-bb2b-2d233d8cd6fe)
+
+This video is sped up, but I've run at least as fast locally on a 3080 GPU...
+
+https://github.com/dwillington/open-brush/assets/8038214/fe2bff39-2f2c-4f16-ba2f-2daf8b2f6f6b
+
+You can also use the "Spectator Camera" to move around creations...
+
+![image](https://github.com/dwillington/open-brush/assets/8038214/f5827b92-ca33-465a-9c8b-45bb04ce4aa0)
+
+Looks like this...
+
+https://github.com/dwillington/open-brush/assets/8038214/7db0a4bf-171d-47bf-aa4a-0e24cfe8586f
+
+Maybe boring in 2D but now you're ready to see it in VR.
+
+
+
+
+
