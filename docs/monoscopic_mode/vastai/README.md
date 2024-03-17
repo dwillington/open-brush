@@ -1,6 +1,6 @@
-##### Using vastai platform to remotely access gpu based desktop for running Open Brush Monoscopic
+### Using Vast.ai platform to remotely access GPU based Desktop for running Open Brush in Monoscopic Mode
 
-Allows for testing 3D generations via Open Brush API in Monoscopic Mode before moving to Open Brush VR.
+Allows for testing 3D generations via Open Brush API in Monoscopic Mode before moving to Open Brush VR Mode.
 
 https://cloud.vast.ai/templates/
 1) Click Templates on Left
@@ -9,7 +9,7 @@ https://cloud.vast.ai/templates/
 
 ![image](https://github.com/dwillington/open-brush/assets/8038214/9727e1f6-26ee-417e-8eac-0b1b83b7451b)
 
-1) Under Docker Options, expose a couple extra ports: -p 8081:8081 -p 8082:8082
+1) Under Docker Options, expose a couple extra ports adding to existing "Docker Options": -p 8081:8081 -p 8082:8082
 2) Enable "Run interactive shell server" for SSH access, very important.
 3) Click "Select and Save" at the bottom
 
@@ -29,24 +29,19 @@ https://cloud.vast.ai/templates/
 
 
 ```
-# PASTE "Direct ssh connect" string INTO ssh_url VAR BELOW
-ssh_url="ssh -p 26065 root@27.65.59.89 -L 8080:localhost:8080"
-IFS=' ' read -ra ADDR <<< "$ssh_url"
-ssh_port=${ADDR[2]} # PARSE OUT PORT 26065 FROM ssh_url
-ssh_ip=${ADDR[3]} # PARSE OUT root@27.65.59.89 FROM ssh_url
-$ssh_url # RUN SSH COMMAND TO CONNECT
+# COPY "Direct ssh connect" AND USE IN SHELL TO CONNECT
+ssh -p 26065 root@27.65.59.89 -L 8080:localhost:8080
 ```
 
 ![image](https://github.com/dwillington/open-brush/assets/8038214/82b297b7-9338-43b9-9a37-13319fb301f4)
 
 
 ```
-# SETUP LINUX MONOSCOPIC
+# SETUP OPEN BRUSH MONOSCOPIC
 wget http://wearcam.org/abaq/openbrush/Linux%20Monoscopic%20Experimental.zip
 unzip 'Linux Monoscopic Experimental.zip' > /dev/null 2>&1
 mv StandaloneLinux64-Monoscopic/ /opt
-# screen-fullscreen 0 OPTION IS USEFUL IN ALLOWING YOU TO ACCESS OS CONTROLS
-chmod a+x /opt/StandaloneLinux64-Monoscopic/OpenBrush-tempprexr2_Data screen-fullscreen 0
+chmod a+x /opt/StandaloneLinux64-Monoscopic/OpenBrush-tempprexr2
 ````
 
 ![image](https://github.com/dwillington/open-brush/assets/8038214/8b6ad107-bad4-4e8f-88b6-01d322554bab)
@@ -58,6 +53,13 @@ By now you should have the option to "OPEN" the Desktop experience via browser. 
 1) Open Konsole Terminal and run "./OpenBrush-tempprexr2_Data" from "/opt/StandaloneLinux64-Monoscopic"
 
 ![image](https://github.com/dwillington/open-brush/assets/8038214/833f3f52-0aeb-44ac-b630-e63b8ef0db6b)
+
+```
+# "-screen-fullscreen 0" OPTION IS USEFUL IN ALLOWING YOU TO ACCESS OS CONTROLS
+/opt/StandaloneLinux64-Monoscopic/OpenBrush-tempprexr2 -screen-fullscreen 0
+```
+
+You should see Open Brush load up...
 
 ```
 # SEND SOME TEST COMMANDS
