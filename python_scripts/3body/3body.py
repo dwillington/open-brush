@@ -1,40 +1,50 @@
+from ob import ob
 import sys
 import os
+import random
 import numpy as np 
 import matplotlib.pyplot as plt 
 from mpl_toolkits.mplot3d import Axes3D
 sys.path.append("..")
 import ob_helper
 
+
 def three_body():
   # plt.style.use('dark_background')
+
+  def get_within_5():
+    return round(random.uniform(-5, 5),2)
+
+  # starting coordinates for planets
+  # p1_start = np.array([get_within_5(), 0, get_within_5()])
+  # p2_start = np.array([get_within_5(), 0, get_within_5()])
+  # p3_start = np.array([get_within_5(), 0, get_within_5()])
 
   # masses of planets
   m_1 = 15
   m_2 = 15
   m_3 = 15
 
-  # starting coordinates for planets
-  # p1_start = x_1, y_1, z_1
   p1_start = np.array([-10, 10, -11])
-  v1_start = np.array([-3, 0, 0])
-
-  # p2_start = x_2, y_2, z_2
   p2_start = np.array([0, 0, 0])
-  v2_start = np.array([0, 0, 0])
-
-  # p3_start = x_3, y_3, z_3
   p3_start = np.array([10, 10, 12])
+  v1_start = np.array([-3, 0, 0])
+  v2_start = np.array([0, 0, 0])
   v3_start = np.array([3, 0, 0])
+
+  # p1_start = np.array([-1, 0, 0])
+  # p3_start = np.array([1, 0, 0])
+  # p2_start = np.array([0, 0, 0])
+  # v1_start = np.array([0.306893,0.125507,0])
+  # v3_start = np.array([0.306893,0.125507,0])
+  # v2_start = np.array([-0.613786,-0.251014,0])
 
 
   def accelerations(p1, p2, p3):
     """
     A function to calculate the derivatives of x, y, and z
     given 3 object and their locations according to Newton's laws
-    
     """
-
     # m_1, m_2, m_3 = self.m1, self.m2, self.m3
     planet_1_dv = -9.8 * m_2 * (p1 - p2)/(np.sqrt((p1[0] - p2[0])**2 + (p1[1] - p2[1])**2 + (p1[2] - p2[2])**2)**3) - \
              9.8 * m_3 * (p1 - p3)/(np.sqrt((p1[0] - p3[0])**2 + (p1[1] - p3[1])**2 + (p1[2] - p3[2])**2)**3)
@@ -69,6 +79,16 @@ def three_body():
   v1[0], v2[0], v3[0] = v1_start, v2_start, v3_start
 
   dpc_helper = ob_helper.DPC(0.5,0,5)
+  counter = 0
+  step_size = 500
+
+  
+  from mycolorpy import colorlist as mcp
+  # https://matplotlib.org/stable/users/explain/colors/colormaps.html
+  color1 = mcp.gen_color(cmap="ocean",n=int(steps/step_size))
+  color2 = mcp.gen_color(cmap="autumn",n=int(steps/step_size))
+  color3 = mcp.gen_color(cmap="spring",n=int(steps/step_size))
+
 
   # evolution of the system
   for i in range(steps-1):
@@ -83,46 +103,60 @@ def three_body():
     p2[i + 1] = p2[i] + v2[i] * delta_t
     p3[i + 1] = p3[i] + v3[i] * delta_t
 
-    step_size = 500
     if (i % step_size) == 0:
+      if i == 0: continue # OR ELSE WE GET (0,0,0) AS THE STARTING POINT
       # print(p1[i+1])
+      # INCREMENT COUNTER ON EVERY (steps / 100) UNITS B/C COLORMAPS ARE MAX = 100
+      if (i % (steps / 100)) == 0:
+        counter += 1
 
       def draw_orbit_segment(p1, i):
         p = -step_size
-        np0 = dpc_helper.get(p1[i+p][0],p1[i+p][1]+1,p1[i+p][2])
+        rect_height = 0.2
+        np0 = dpc_helper.get(p1[i+p][0],p1[i+p][1]+rect_height,p1[i+p][2])
         np = dpc_helper.get(p1[i+p][0],p1[i+p][1],p1[i+p][2])
         # n0 = "0,0,0"
-        n0 = dpc_helper.get(p1[i+1][0],p1[i+1][1]+1,p1[i+1][2])
+        n0 = dpc_helper.get(p1[i+1][0],p1[i+1][1]+rect_height,p1[i+1][2])
         n1 = dpc_helper.get(p1[i+1][0],p1[i+1][1],p1[i+1][2])
-
-        draw_path = f"draw.paths=[[{n0}],[{n1}]]"
-
-        draw_path = f"draw.paths=[[{n0}],[{n1}]],[[{np}],[{n1}]],[[{np0}],[{n0}]]"
-
+        draw_path = f"draw.paths=[[{np}],[{n1}]]"
+        # draw_path = f"draw.paths=[[{n0}],[{n1}]],[[{np}],[{n1}]],[[{np0}],[{n0}]]"
+        
         ob_helper.sendCommands([f"{draw_path}"])
         return draw_path
       
-      ob_helper.sendCommands([f"color.set.html=red"])
+      color = color1[counter].replace('#','')
+      ob_helper.sendCommands([f"color.set.html={color}"])
       draw_path = draw_orbit_segment(p1, i)
 
-      ob_helper.sendCommands([f"color.set.html=white"])
+      color = color2[counter].replace('#','')
+      ob_helper.sendCommands([f"color.set.html={color}"])
       draw_path = draw_orbit_segment(p2, i)
 
-      ob_helper.sendCommands([f"color.set.html=blue"])
+      color = color3[counter].replace('#','')
+      ob_helper.sendCommands([f"color.set.html={color}"])
       draw_path = draw_orbit_segment(p3, i)
 
-    # if i > 2000: 
+      global BRUSH_TYPE
+      if BRUSH_TYPE != "DuctTape":
+        BRUSH_TYPE = "DuctTape"
+        ob_helper.sendCommands([f"brush.type={BRUSH_TYPE}"])
+      
+
+    # if i > 20000:
       # return
 
+
+BRUSH_TYPE = "NeonPulse"
 
 def main():
   if "OB_HOST" in os.environ:
     ob_helper.ob_host = os.environ['OB_HOST']
 
   ob_helper.sendCommands(["new"])
-  ob_helper.sendCommands(["brush.type=Light"])
+  ob_helper.sendCommands([f"brush.type={BRUSH_TYPE}"])
+  # ob_helper.sendCommands(["brush.size.set=0.1"])
   ob_helper.sendCommands(["brush.move.to=0,0,0"])
-  # ob_helper.sendCommands(["user.move.to=-60,4,80"])
+  ob_helper.sendCommands(["user.move.to=-20,-5,-7"])
 
   three_body()
 
