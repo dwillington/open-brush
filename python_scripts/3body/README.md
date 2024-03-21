@@ -13,6 +13,4 @@ https://www.reddit.com/r/physicsgifs/comments/14db21p/a_few_three_body_periodic_
 
 https://observablehq.com/@rreusser/periodic-planar-three-body-orbits
 
-https://www.reddit.com/r/physicsgifs/comments/14db21p/a_few_three_body_periodic_orbits/
-
-
+https://thepythoncodingbook.com/2021/12/11/simulating-3d-solar-system-python-matplotlib/
