@@ -38,7 +38,7 @@ class DPC:
 
   def get(self, x, y, z):
     return f"{round((x*self.SCALER)+self.X_OFFSET,2)},{round((y*self.SCALER)+self.Y_OFFSET,2)},{round((z*self.SCALER)+self.Z_OFFSET,2)}"
-
+    
 class Point:
 
     def __init__(self, x, y, z=0):

@@ -46,14 +46,11 @@ def three_body():
     given 3 object and their locations according to Newton's laws
     """
     # m_1, m_2, m_3 = self.m1, self.m2, self.m3
-    planet_1_dv = -9.8 * m_2 * (p1 - p2)/(np.sqrt((p1[0] - p2[0])**2 + (p1[1] - p2[1])**2 + (p1[2] - p2[2])**2)**3) - \
-             9.8 * m_3 * (p1 - p3)/(np.sqrt((p1[0] - p3[0])**2 + (p1[1] - p3[1])**2 + (p1[2] - p3[2])**2)**3)
+    planet_1_dv = -9.8 * m_2 * (p1 - p2)/(np.sqrt((p1[0] - p2[0])**2 + (p1[1] - p2[1])**2 + (p1[2] - p2[2])**2)**3) - \ 9.8 * m_3 * (p1 - p3)/(np.sqrt((p1[0] - p3[0])**2 + (p1[1] - p3[1])**2 + (p1[2] - p3[2])**2)**3)
 
-    planet_2_dv = -9.8 * m_3 * (p2 - p3)/(np.sqrt((p2[0] - p3[0])**2 + (p2[1] - p3[1])**2 + (p2[2] - p3[2])**2)**3) - \
-             9.8 * m_1 * (p2 - p1)/(np.sqrt((p2[0] - p1[0])**2 + (p2[1] - p1[1])**2 + (p2[2] - p1[2])**2)**3)
+    planet_2_dv = -9.8 * m_3 * (p2 - p3)/(np.sqrt((p2[0] - p3[0])**2 + (p2[1] - p3[1])**2 + (p2[2] - p3[2])**2)**3) - \ 9.8 * m_1 * (p2 - p1)/(np.sqrt((p2[0] - p1[0])**2 + (p2[1] - p1[1])**2 + (p2[2] - p1[2])**2)**3)
 
-    planet_3_dv = -9.8 * m_1 * (p3 - p1)/(np.sqrt((p3[0] - p1[0])**2 + (p3[1] - p1[1])**2 + (p3[2] - p1[2])**2)**3) - \
-             9.8 * m_2 * (p3 - p2)/(np.sqrt((p3[0] - p2[0])**2 + (p3[1] - p2[1])**2 + (p3[2] - p2[2])**2)**3)
+    planet_3_dv = -9.8 * m_1 * (p3 - p1)/(np.sqrt((p3[0] - p1[0])**2 + (p3[1] - p1[1])**2 + (p3[2] - p1[2])**2)**3) - \ 9.8 * m_2 * (p3 - p2)/(np.sqrt((p3[0] - p2[0])**2 + (p3[1] - p2[1])**2 + (p3[2] - p2[2])**2)**3)
 
     return planet_1_dv, planet_2_dv, planet_3_dv
     
@@ -75,20 +72,18 @@ def three_body():
 
   # starting point and velocity
   p1[0], p2[0], p3[0] = p1_start, p2_start, p3_start
-
   v1[0], v2[0], v3[0] = v1_start, v2_start, v3_start
 
-  dpc_helper = ob_helper.DPC(0.5,0,5)
-  counter = 0
-  step_size = 500
-
-  
-  from mycolorpy import colorlist as mcp
   # https://matplotlib.org/stable/users/explain/colors/colormaps.html
+  from mycolorpy import colorlist as mcp
   color1 = mcp.gen_color(cmap="ocean",n=int(steps/step_size))
   color2 = mcp.gen_color(cmap="autumn",n=int(steps/step_size))
   color3 = mcp.gen_color(cmap="spring",n=int(steps/step_size))
 
+  dpc_helper = ob_helper.DPC(0.5,0,5)
+  counter = 0
+  step_size = 500
+  segment_counter = 0
 
   # evolution of the system
   for i in range(steps-1):
@@ -136,11 +131,13 @@ def three_body():
       ob_helper.sendCommands([f"color.set.html={color}"])
       draw_path = draw_orbit_segment(p3, i)
 
-      global BRUSH_TYPE
-      if BRUSH_TYPE != "DuctTape":
-        BRUSH_TYPE = "DuctTape"
-        ob_helper.sendCommands([f"brush.type={BRUSH_TYPE}"])
+      if segment_counter > 1: # FIRST 1-2 SEGMENTS CAN BE NEONPULSE TO INDICATE BODY ORIGINS
+        global BRUSH_TYPE
+        if BRUSH_TYPE != "DuctTape":
+          BRUSH_TYPE = "DuctTape"
+          ob_helper.sendCommands([f"brush.type={BRUSH_TYPE}"])
       
+    segment_counter += 1
 
     # if i > 20000:
       # return
