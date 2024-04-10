@@ -3,4 +3,3 @@ requests
 imageio
 numpy
 matplotlib
-colorlist
