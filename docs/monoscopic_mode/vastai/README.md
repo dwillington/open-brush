@@ -92,6 +92,7 @@ To run some Python scripts in this repo...
 apt install virtualenv -y
 virtualenv -p python3 ~/venv_3
 source ~/venv_3/bin/activate
+ln -s ~/open-brush/docs/api_bindings/ob.py ~/venv_3/lib/python3.10/site-packages/ob.py
 cd ~/open-brush/python_scripts
 pip install -r requirements.txt
 cd ~/open-brush/python_scripts/geoDome
