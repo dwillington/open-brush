@@ -72,14 +72,15 @@ def letters():
 
 
 def text():
-  doc = minidom.parse("Aldrich-Regular/Aldrich-Regular.svg")  # parseString also exists
+  doc = minidom.parse("LUCON.svg")
+  # doc = minidom.parse("/mnt/c/Users/dwill/Downloads/to-delete/fonts/NotoSansZanabazarSquare-Regular.svg")
   glyphs = [path.getAttribute('d') for path in doc.getElementsByTagName('glyph')]
 
   
   for g in glyphs:
     print(g)
     ob.new()
-    ob.brush.type("Light")
+    ob.brush.type("Paper")
     # ob.brush.size.set(1)
     # ob.brush.size.add (0.5)
     # ob.brush.size.add (0.5)
