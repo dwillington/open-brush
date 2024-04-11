@@ -36,9 +36,18 @@ class DPC:
     self.Y_OFFSET = y_offset
     self.Z_OFFSET = z_offset
 
+  # "1.0,2.0,3.0"
   def get(self, x, y, z):
     return f"{round((x*self.SCALER)+self.X_OFFSET,2)},{round((y*self.SCALER)+self.Y_OFFSET,2)},{round((z*self.SCALER)+self.Z_OFFSET,2)}"
     
+  # "1.0,2.0,3.0" -> [1.0 2.0 3.0]
+  def get_as_list(s):
+    x = [float(i) for i in s.split(',')]
+    if len(x) != 3:
+      print("error")
+      return
+    return x
+
 class Point:
 
     def __init__(self, x, y, z=0):

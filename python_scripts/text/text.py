@@ -72,19 +72,19 @@ def letters():
 
 
 def text():
-  doc = minidom.parse("LUCON.svg")  # parseString also exists
+  doc = minidom.parse("Aldrich-Regular/Aldrich-Regular.svg")  # parseString also exists
   glyphs = [path.getAttribute('d') for path in doc.getElementsByTagName('glyph')]
-  
+
   
   for g in glyphs:
     print(g)
     ob.new()
     ob.brush.type("Light")
-    ob.brush.size.set(1)
-    ob.brush.size.add (0.5)
-    ob.brush.size.add (0.5)
-    ob.brush.size.add (0.5)
-    ob.brush.size.add (0.5)
+    # ob.brush.size.set(1)
+    # ob.brush.size.add (0.5)
+    # ob.brush.size.add (0.5)
+    # ob.brush.size.add (0.5)
+    # ob.brush.size.add (0.5)
     ob.brush.move.to("0,20,0")
     ob.user.move.to("-15,0,20")
     ob.draw.svg(g.replace(" ", "%20"))

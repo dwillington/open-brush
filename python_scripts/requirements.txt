@@ -3,3 +3,4 @@ requests
 imageio
 numpy
 matplotlib
+mycolorpy

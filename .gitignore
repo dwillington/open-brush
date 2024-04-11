@@ -4,3 +4,4 @@ node_modules/
 out.txt
 **/3body
 *.csv
+**/text
