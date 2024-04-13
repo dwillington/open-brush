@@ -41,7 +41,7 @@ class DPC:
     return f"{round((x*self.SCALER)+self.X_OFFSET,2)},{round((y*self.SCALER)+self.Y_OFFSET,2)},{round((z*self.SCALER)+self.Z_OFFSET,2)}"
     
   # "1.0,2.0,3.0" -> [1.0 2.0 3.0]
-  def get_as_list(s):
+  def get_as_list(self,s):
     x = [float(i) for i in s.split(',')]
     if len(x) != 3:
       print("error")
