@@ -80,9 +80,9 @@ dpc_helper = ob_helper.DPC(0.0005,0,0,0)
 # dpc_helper = ob_helper.DPC(0.001,0,0,0)
 
 def text():
-  # doc = minidom.parse("LUCON.svg")
+  doc = minidom.parse("LUCON.svg")
   # doc = minidom.parse("/mnt/c/Users/dwill/Downloads/to-delete/fonts/NotoSansZanabazarSquare-Regular.svg")
-  doc = minidom.parse("Aldrich-Regular/Aldrich-Regular.svg")
+  # doc = minidom.parse("Aldrich-Regular/Aldrich-Regular.svg")
   glyphs = [path.getAttribute('d') for path in doc.getElementsByTagName('glyph')]
   
   # for g in glyphs:
