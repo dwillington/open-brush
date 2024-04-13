@@ -92,7 +92,6 @@ def text():
     print('glyph-name:', path.getAttribute('glyph-name'))
     ob.new()
     ob.user.move.to("5,0,20")
-    ob.color.set.html("4CCD99")
     ob.draw.text(path.getAttribute('unicode'))
     ob.brush.move.to("0,20,0")
     ob.color.set.html("ff1493")
