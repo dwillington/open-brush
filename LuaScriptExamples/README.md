@@ -27,3 +27,11 @@ Some screenshots on how I got bootstrapped to start experimenting with the Realt
 
 #### Copy file from PC to Quest 2 (over USB C):
 <img src="images/4_copy.JPG" width="800" />
+
+#### Activate / Deactivate scripts from command line:
+<img src="images/6a.JPG" width="800" />
+
+```
+ob scripts.toolscript.activate=xyz
+ob scripts.toolscript.deactivate
+```

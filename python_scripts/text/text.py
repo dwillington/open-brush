@@ -91,7 +91,7 @@ def text():
 
     print('glyph-name:', path.getAttribute('glyph-name'))
     ob.new()
-    ob.user.move.to("5,0,20")
+    ob.user.move.to("0,0,20")
     # ob.color.set.html("4CCD99")
     # ob.draw.text(path.getAttribute('unicode'))
 
@@ -104,7 +104,8 @@ def text():
     ################################################################################
     d = path.getAttribute('d')
     parsed = parse_path(d)
-    print('Objects:\n', parsed, '\n' + '-' * 20)
+    print('Path:', d, '\n' + '-' * 20)
+    # print('Objects:\n', parsed, '\n' + '-' * 20)
     for obj in parsed:
       op = type(obj).__name__
       start = (round(obj.start.real, 3), round(obj.start.imag, 3))
