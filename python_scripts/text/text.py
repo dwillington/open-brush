@@ -94,11 +94,14 @@ def text():
     ob.user.move.to("5,0,20")
     # ob.color.set.html("4CCD99")
     # ob.draw.text(path.getAttribute('unicode'))
+
     ob.brush.move.to("0,20,0")
     ob.color.set.html("ff1493")
-    # ob.draw.text("Hello")
 
+    ################################################################################
     # https://stackoverflow.com/questions/65850680/how-to-extract-the-cartesian-coordinates-x-y-of-an-svg-image
+    # DRAW AN SVG PATH ONLY IN LINES
+    ################################################################################
     d = path.getAttribute('d')
     parsed = parse_path(d)
     print('Objects:\n', parsed, '\n' + '-' * 20)
@@ -118,9 +121,7 @@ def text():
 
     print('-' * 20)
 
-    # ob.brush.type("Light")
-    # ob.brush.size.set(1)
-    # ob.brush.move.to("0,0,0")
+    # USE DRAW.SVG IN HTTP API
     ob.color.set.html("blue")
     ob.draw.svg(d.replace(" ", "%20"))
     
