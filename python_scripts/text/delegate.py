@@ -1,3 +1,5 @@
+from http.server import BaseHTTPRequestHandler, HTTPServer
+
 import os
 import sys
 sys.path.append("../")
@@ -8,63 +10,82 @@ from xml.dom import minidom
 from svg.path import parse_path
 import urllib
 import re
+import json
+
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKCYAN = '\033[96m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+
+class S(BaseHTTPRequestHandler):
+    def _set_response(self):
+        self.send_response(200)
+        self.send_header('Content-type', 'text/html')
+        self.end_headers()
+
+    def do_GET(self):
+        path = self.path
+        print(f"{bcolors.WARNING}GET request{bcolors.ENDC},\nPath: {path}\nHeaders:\n{str(self.headers)}\n")
+        self._set_response()
+        resp = "GET request for {}".format(path)
+        if path == "/":
+          self.send_header('Content-Type', 'application/json')
+          self.end_headers()
+          resp = serve()
+        self.wfile.write(resp.encode('utf-8'))
+
+    def do_POST(self):
+        content_length = int(self.headers['Content-Length']) # <--- Gets the size of data
+        post_data = self.rfile.read(content_length) # <--- Gets the data itself
+        print("POST request,\nPath: %s\nHeaders:\n%s\n\nBody:\n%s\n",
+                str(self.path), str(self.headers), post_data.decode('utf-8'))
+
+        self._set_response()
+        self.wfile.write("POST request for {}".format(self.path).encode('utf-8'))
+
+def run(server_class=HTTPServer, handler_class=S, port=8080):
+    server_address = ('', port)
+    httpd = server_class(server_address, handler_class)
+    print('Starting httpd...\n')
+    try:
+        httpd.serve_forever()
+        # httpd.handle_request()
+    except KeyboardInterrupt:
+        pass
+    httpd.server_close()
+    print('Stopping httpd...\n')
 
 
-dpc_helper = ob_helper.DPC(0.0005,0,0,0)
-# dpc_helper = ob_helper.DPC(0.001,0,0,0)
-
-def text():
+svgDict = {}
+def parseSVGs():
   doc = minidom.parse("LUCON.svg")
-  # doc = minidom.parse("/mnt/c/Users/dwill/Downloads/to-delete/fonts/NotoSansZanabazarSquare-Regular.svg")
-  # doc = minidom.parse("Aldrich-Regular/Aldrich-Regular.svg")
-  glyphs = [path.getAttribute('d') for path in doc.getElementsByTagName('glyph')]
-  
-  # for g in glyphs:
   for ipath, path in enumerate(doc.getElementsByTagName("glyph")):
     if path.hasAttribute('d') == False: continue
-
-    print('glyph-name:', path.getAttribute('glyph-name'))
-    ob.new()
-    ob.user.move.to("0,0,20")
-    # ob.color.set.html("4CCD99")
-    # ob.draw.text(path.getAttribute('unicode'))
-
-    ob.brush.move.to("0,20,0")
-    ob.color.set.html("ff1493")
-
-    ################################################################################
-    # https://stackoverflow.com/questions/65850680/how-to-extract-the-cartesian-coordinates-x-y-of-an-svg-image
-    # DRAW AN SVG PATH ONLY IN LINES
-    ################################################################################
+    u = path.getAttribute('unicode')
     d = path.getAttribute('d')
-    parsed = parse_path(d)
-    print('Path:', d, '\n' + '-' * 20)
-    # print('Objects:\n', parsed, '\n' + '-' * 20)
-    for obj in parsed:
-      op = type(obj).__name__
-      start = (round(obj.start.real, 3), round(obj.start.imag, 3))
-      end = (round(obj.end.real, 3), round(obj.end.imag, 3))
-      print(op, ', start/end coords:', start, end)
-      # print(type(obj).__name__, ', start/end coords:', ((round(obj.start.real, 3), round(obj.start.imag, 3)), (round(obj.end.real, 3), round(obj.end.imag, 3))))
+    svgDict[u] = d
+    if ipath > 10: return
 
-      if op == "Move":
-        continue
-        # ob.brush.move.to(f"{start[0]},{start[1]},0")
-      # elif op == "Line":
-      else:
-        ob.draw.path(f"[{dpc_helper.get(start[0],start[1],0)}],[{dpc_helper.get(end[0],end[1],0)}]")
+COUNTER = 0
+def server():
+  parseSVGs()
+  run()
 
-    print('-' * 20)
+@staticmethod
+def serve():
+  # ob.new()
+  # ob.user.move.to("0,0,20")
+  # ob.brush.move.to("0,20,0")
 
-    ################################################################################
-    # USE DRAW.SVG IN HTTP API
-    ################################################################################
-    ob.color.set.html("blue")
-    ob.draw.svg(d.replace(" ", "%20"))
-    
-    input("Press Enter to continue...")
-
-    # return
+  global COUNTER, svgDict
+  COUNTER += 1
+  return json.dumps({'svgPath': 'M703 1129l306 139l61 -188l-328 -68v14q0 53 -39 103zM732 983l226 -248l-160 -116l-166 291q63 18 100 73zM601 910l-165 -291l-160 116l226 248q37 -55 99 -73zM492 1012l-328 68l61 188l305 -139q-38 -50 -38 -104v-13zM555 1147l-37 333h198l-37 -333q-35 13 -62 13t-62 -13z'})
 
 
 def main():
@@ -73,13 +94,8 @@ def main():
   ob.brush.type("Light")
   ob.brush.move.to("0,0,0")
   
-  # parser = argparse.ArgumentParser()
-  # parser.add_argument("--text", action="store_true")
-  # args = parser.parse_args()
-  # if args.text:
-    # text()
 
-  text()
+  server()
 
 if __name__ == '__main__':
     main()
