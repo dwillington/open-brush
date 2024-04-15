@@ -35,3 +35,20 @@ Some screenshots on how I got bootstrapped to start experimenting with the Realt
 ob scripts.toolscript.activate=xyz
 ob scripts.toolscript.deactivate
 ```
+
+#### Using adb to connect to logs on Quest 2:
+https://docs.unity3d.com/Manual/android-debugging-on-an-android-device.html#view-android-logs
+
+NOTE: when you first plug in your Quest 2 via USB, do NOT enable file sharing when prompted. To reset this, just unplug and plug the USBC C connection and then follow...
+
+```
+adb devices
+adb tcpip 5555
+adb connect 10.6.20.213:5555
+ adb -s 10.6.20.213:5555 logcat
+adb -s 10.6.20.213:5555 logcat | grep Unity
+```
+
+![image](https://github.com/dwillington/open-brush/assets/8038214/97826aa2-7ded-4ea2-986e-1aceae879507)
+
+Once you're seeing logs, you can disconnect and reconnect USB C if necessary and enable file sharing so you can see Quest 2 in Windows Explorer for copying over Lua scripts.
