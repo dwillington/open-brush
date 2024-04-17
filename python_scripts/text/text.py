@@ -10,8 +10,8 @@ import urllib
 import re
 import math
 
-# dpc_helper = ob_helper.DPC(0.0005,0,0,0)
-dpc_helper = ob_helper.DPC(0.001,0,0,0)
+dpc_helper = ob_helper.DPC(0.0005,0,0,0)
+# dpc_helper = ob_helper.DPC(0.001,0,0,0)
 
 def text():
   doc = minidom.parse("LUCON.svg")
@@ -81,7 +81,7 @@ def text():
 def main():
   if "OB_HOST" in os.environ:
     ob.OB_HOST = os.environ['OB_HOST']
-  ob.brush.type("Icing")
+  ob.brush.type("Light")
   ob.brush.size.set(0.01)
   ob.brush.move.to("0,0,0")
   
