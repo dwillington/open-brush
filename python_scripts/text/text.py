@@ -8,10 +8,10 @@ from xml.dom import minidom
 from svg.path import parse_path
 import urllib
 import re
+import math
 
-
-dpc_helper = ob_helper.DPC(0.0005,0,0,0)
-# dpc_helper = ob_helper.DPC(0.001,0,0,0)
+# dpc_helper = ob_helper.DPC(0.0005,0,0,0)
+dpc_helper = ob_helper.DPC(0.001,0,0,0)
 
 def text():
   doc = minidom.parse("LUCON.svg")
@@ -26,15 +26,18 @@ def text():
     print('glyph-name:', path.getAttribute('glyph-name'))
     ob.new()
     ob.user.move.to("0,0,20")
-    # ob.color.set.html("4CCD99")
-    # ob.draw.text(path.getAttribute('unicode'))
+    ob.color.set.html("4CCD99")
+    ################################################################################
+    # USE DRAW.TEXT IN HTTP API
+    ################################################################################
+    ob.draw.text(path.getAttribute('unicode'))
 
     ob.brush.move.to("0,20,0")
     ob.color.set.html("ff1493")
 
     ################################################################################
     # https://stackoverflow.com/questions/65850680/how-to-extract-the-cartesian-coordinates-x-y-of-an-svg-image
-    # DRAW AN SVG PATH ONLY IN LINES
+    # USE DRAW.TEXT IN HTTP API TO DRAW AN SVG PATH ONLY IN LINES
     ################################################################################
     d = path.getAttribute('d')
     parsed = parse_path(d)
@@ -49,10 +52,18 @@ def text():
 
       if op == "Move":
         continue
-        # ob.brush.move.to(f"{start[0]},{start[1]},0")
-      # elif op == "Line":
       else:
-        ob.draw.path(f"[{dpc_helper.get(start[0],start[1],0)}],[{dpc_helper.get(end[0],end[1],0)}]")
+        p0 = dpc_helper.get(start[0],start[1],0) # THESE ARE STRINGS
+        p1 = dpc_helper.get(end[0],end[1],0)     # THESE ARE STRINGS
+        p0_l = dpc_helper.get_as_list(p0)
+        p1_l = dpc_helper.get_as_list(p1)
+        if math.dist(p0_l,p1_l) == 0:
+          continue
+        elif dpc_helper.below_threshold(p0_l,p1_l,printout=True):
+          True
+        dp = f"[{p0}],[{p1}]"
+        print(dp)
+        ob.draw.path(dp)
 
     print('-' * 20)
 
@@ -70,7 +81,8 @@ def text():
 def main():
   if "OB_HOST" in os.environ:
     ob.OB_HOST = os.environ['OB_HOST']
-  ob.brush.type("Light")
+  ob.brush.type("Icing")
+  ob.brush.size.set(0.01)
   ob.brush.move.to("0,0,0")
   
   # parser = argparse.ArgumentParser()

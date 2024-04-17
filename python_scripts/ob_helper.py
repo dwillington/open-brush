@@ -1,6 +1,7 @@
 import requests
 import random
 import socket
+import math
 
 ob_host = "127.0.0.1"
 
@@ -47,6 +48,15 @@ class DPC:
       print("error")
       return
     return x
+
+  @staticmethod
+  def below_threshold(p0, p1, THRESHOLD=0.058, printout=False):
+    distance = math.dist(p0,p1)
+    if distance <= THRESHOLD:
+      if printout == True:
+        print(f"{distance} < {THRESHOLD}")
+      return True
+    return False
 
 class Point:
 

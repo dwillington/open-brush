@@ -35,8 +35,8 @@ class S(BaseHTTPRequestHandler):
         self._set_response()
         resp = "GET request for {}".format(path)
         if path == "/":
-          # self.send_header('Content-Type', 'application/json')
-          # self.end_headers()
+          self.send_header('Content-Type', 'application/json')
+          self.end_headers()
           resp = serve()
         self.wfile.write(resp.encode('utf-8'))
 
