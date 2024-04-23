@@ -20,8 +20,18 @@ This is how I run the script in PowerShell.
 
 Have a look at [london_maps.txt](london_maps.txt) to see what's going on under the hood...
 
+Click image below to see video...
+
+[![London Connections in Open Brush](https://cdn.theatlantic.com/thumbor/LyjtxboLnQbQ3JYDPrOD1ymkUqI=/49x27:1130x635/976x549/media/img/mt/2015/09/tube/original.jpg)](https://youtu.be/Nz1eZed3lbM)
+
+
+
+
+
 
 
 If your Open Brush instance is running somewhere other than your Computer or "localhost", see below:
 
 https://docs.openbrush.app/user-guide/open-brush-api#how-do-i-configure-it
+
+
