@@ -9,6 +9,9 @@ from svg.path import parse_path
 import urllib
 import re
 import math
+import svg_path_transform as svg_path_transform
+import svgutils
+import svgpathtools as svgpathtools 
 
 dpc_helper = ob_helper.DPC(0.0005,0,0,0)
 # dpc_helper = ob_helper.DPC(0.001,0,0,0)
@@ -78,12 +81,53 @@ def text():
     # return
 
 
+svgDict = {}
+def parseSVGs():
+  doc = minidom.parse("LUCON.svg")
+  for ipath, path in enumerate(doc.getElementsByTagName("glyph")):
+    if path.hasAttribute('d') == False: continue
+    u = path.getAttribute('unicode')
+    d = path.getAttribute('d')
+    svgDict[u] = d
+    # if ipath > 10: return
+
+
+def testDraw():
+  parseSVGs()
+  def getSvg(text):
+    counter = 0.0
+    for c in text:
+      path = svgDict[c]
+      print(path)
+      path = svg_path_transform.parse_path(path)
+      path = svg_path_transform.translate_and_scale(path, s=(0.05, 0.05))
+      path = svg_path_transform.path_to_string(path)
+      # path = ''.join(sum(path, []))
+      print(path)
+      ob.draw.svg(path.replace(" ", "%20"))
+      counter += 0.5
+      ob.brush.move.by(f"{counter},0,0")
+      input("Press Enter to continue...")
+      
+
+  # text = svgutils.transform.TextElement(0,0,"hello")
+  # text = text.tostr().decode("utf-8")
+  # text = svgutils.transform.fromstring(text)
+  # text = text.to_str().decode("utf-8")
+  # print(text)
+  # ob.draw.svg(text.replace(" ", "%20"))
+
+  getSvg("hello")
+
+
 def main():
   if "OB_HOST" in os.environ:
     ob.OB_HOST = os.environ['OB_HOST']
+  ob.new()
   ob.brush.type("Light")
   ob.brush.size.set(0.01)
   ob.brush.move.to("0,0,0")
+  ob.user.move.to("0,0,20")
   
   # parser = argparse.ArgumentParser()
   # parser.add_argument("--text", action="store_true")
@@ -91,7 +135,8 @@ def main():
   # if args.text:
     # text()
 
-  text()
+  testDraw()
+  # text()
 
 if __name__ == '__main__':
     main()

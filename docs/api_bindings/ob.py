@@ -1,9 +1,12 @@
 import urllib.request
+import urllib.parse
 
 class ob:
 
     OB_HOST = "localhost"
     
+    CAPTURE_COMMAND = True
+    CAPTURE_FILE = "/tmp/ob_command_capture.txt"
     STATIC_BRUSHES = ["Light","Icing","OilPaint","Ink","ThickPaint","WetPaint","Marker","TaperedMarker","PinchedMarker","Highlighter","Flat","TaperedFlat","PinchedFlat","SoftHighlighter","VelvetInk"
     ,"DuctTape","Paper","CelVinyl", "Toon"]
     DYNAMIC_BRUSHES= ["Fire","DrWigglez","Hypercolor","Comet","Disco","Rainbow","Waveform","Electricity","ChromaticWave","NeonPulse","Dots","Plasma","Streamers"]
@@ -72,6 +75,8 @@ class ob:
             @staticmethod
             def to(position):
                 urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?user.move.to={position}")
+                if ob.CAPTURE_COMMAND:
+                  print(f"http://{ob.OB_HOST}:40074/api/v1?user.move.to={position}", file=open(ob.CAPTURE_FILE, 'a'))
             @staticmethod
             def by(amount):
                 urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?user.move.by={amount}")
@@ -80,6 +85,8 @@ class ob:
             @staticmethod
             def to(position):
                 urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?brush.move.to={position}")
+                if ob.CAPTURE_COMMAND:
+                  print(f"http://{ob.OB_HOST}:40074/api/v1?brush.move.to={position}", file=open(ob.CAPTURE_FILE, 'a'))
             @staticmethod
             def by(position):
                 urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?brush.move.by={position}")
@@ -141,10 +148,14 @@ class ob:
         @staticmethod
         def type(brushType):
             urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?brush.type={brushType}")
+            if ob.CAPTURE_COMMAND:
+              print(f"http://{ob.OB_HOST}:40074/api/v1?brush.type={brushType}", file=open(ob.CAPTURE_FILE, 'a'))
         class size:
             @staticmethod
             def set(size):
                 urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?brush.size.set={size}")
+                if ob.CAPTURE_COMMAND:
+                  print(f"http://{ob.OB_HOST}:40074/api/v1?brush.size.set={size}", file=open(ob.CAPTURE_FILE, 'a'))
             @staticmethod
             def add(amount):
                 urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?brush.size.add={amount}")
@@ -202,22 +213,39 @@ class ob:
     class draw:
         @staticmethod
         def paths(jsonString):
-            urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?draw.paths={jsonString}")
+            data = urllib.parse.urlencode({"draw.paths":f"{jsonString}"}).encode()
+            req  = urllib.request.Request(f"http://{ob.OB_HOST}:40074/api/v1", data=data) # "POST"
+            resp = urllib.request.urlopen(req)
+            if ob.CAPTURE_COMMAND:
+              print(f"http://{ob.OB_HOST}:40074/api/v1?draw.paths={jsonString}", file=open(ob.CAPTURE_FILE, 'a'))
+            # urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?draw.paths={jsonString}")
         @staticmethod
         def path(jsonString):
-            urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?draw.path={jsonString}")
+            data = urllib.parse.urlencode({"draw.path":f"{jsonString}"}).encode()
+            req  = urllib.request.Request(f"http://{ob.OB_HOST}:40074/api/v1", data=data) # POST
+            resp = urllib.request.urlopen(req)
+            if ob.CAPTURE_COMMAND:
+              print(f"http://{ob.OB_HOST}:40074/api/v1?draw.path={jsonString}", file=open(ob.CAPTURE_FILE, 'a'))
+            # urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?draw.path={jsonString}") # GET
         @staticmethod
         def stroke(jsonString):
             urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?draw.stroke={jsonString}")
         @staticmethod
         def polygon(sides, radius, angle):
             urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?draw.polygon={sides},{radius},{angle}")
+            if ob.CAPTURE_COMMAND:
+              print(f"http://{ob.OB_HOST}:40074/api/v1?draw.polygon={sides},{radius},{angle}", file=open(ob.CAPTURE_FILE, 'a'))
         @staticmethod
         def text(text):
             urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?draw.text={text}")
         @staticmethod
+        def opentypetext(text):
+            urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?draw.opentypetext={text}")
+        @staticmethod
         def svg(svgPathString):
             urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?draw.svg={svgPathString}")
+            if ob.CAPTURE_COMMAND:
+              print(f"http://{ob.OB_HOST}:40074/api/v1?draw.svg={svgPathString}", file=open(ob.CAPTURE_FILE, 'a'))
         @staticmethod
         def camerapath(index):
             urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?draw.camerapath={index}")
@@ -239,6 +267,8 @@ class ob:
             @staticmethod
             def html(color):
                 urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?color.set.html={color}")
+                if ob.CAPTURE_COMMAND:
+                  print(f"http://{ob.OB_HOST}:40074/api/v1?color.set.html={color}", file=open(ob.CAPTURE_FILE, 'a'))
     class save:
         @staticmethod
         def overwrite():
@@ -289,6 +319,8 @@ class ob:
     @staticmethod
     def new():
         urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?new")
+        if ob.CAPTURE_COMMAND:
+          print(f"http://{ob.OB_HOST}:40074/api/v1?new", file=open(ob.CAPTURE_FILE, 'a'))
     class symmetry:
         @staticmethod
         def mirror():
