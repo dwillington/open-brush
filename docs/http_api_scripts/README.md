@@ -16,6 +16,6 @@ https://raw.githubusercontent.com/dwillington/open-brush/main/docs/http_api_scri
 
 ![image](https://github.com/dwillington/open-brush/assets/8038214/0bf77e11-63b6-4f90-9762-23ce8a8feb18)
 
-Have a look at [london_maps.txt](ondon_maps.txt) to see what's going on under the hood...
+Have a look at [london_maps.txt](london_maps.txt) to see what's going on under the hood...
 
 
