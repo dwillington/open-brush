@@ -1,7 +1,5 @@
 #### A place to share recreation of Open Brush output via individual http API commands
 
-more on the [Open Brush http API](https://docs.openbrush.app/user-guide/open-brush-api/api-commands)
-
 For now it's just a PowerShell script.
 
 You will need at least to download:
@@ -24,9 +22,9 @@ Click image below to see video...
 
 [![London Connections in Open Brush](https://cdn.theatlantic.com/thumbor/LyjtxboLnQbQ3JYDPrOD1ymkUqI=/49x27:1130x635/976x549/media/img/mt/2015/09/tube/original.jpg)](https://youtu.be/Nz1eZed3lbM)
 
+more on the [Open Brush http API](https://docs.openbrush.app/user-guide/open-brush-api)
 
-
-
+more on [http API commands](http://localhost:40074/help/commands)
 
 
 
