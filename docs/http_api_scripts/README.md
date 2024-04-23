@@ -6,7 +6,7 @@ For now it's just a PowerShell script.
 
 You will need at least to download:
 
-1) http_api.ps1 PowerShell script
+1) [http_api.ps1](http_api.ps1) PowerShell script
 
 2) [london_maps.txt](london_maps.txt) file representing the individual Open Brush http API commands, assuming Open Brush is running on localhost
 
