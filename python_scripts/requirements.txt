@@ -5,3 +5,5 @@ numpy
 matplotlib
 mycolorpy
 geopandas
+svg_path_transform
+svg.path
