@@ -1,7 +1,9 @@
 #### Running Open Brush in Monoscopic Mode (PREFERRED AND RECOMMENDED METHOD FOR DEVELOPMENT AND LEARNING)
+
 https://docs.openbrush.app/user-guide/monoscopic-mode
-<br />
-<br />
+
+>> Below is and older and yet valid way of working with monoscopic mode. However, for the latest and greatest, see above:
+
 Download (your version based on Windows / Linux) and Unzip:
 <br />
 http://wearcam.org/abaq/openbrush/
