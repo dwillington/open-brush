@@ -5,7 +5,7 @@ class ob:
 
     OB_HOST = "localhost"
     
-    CAPTURE_COMMAND = True
+    CAPTURE_COMMAND = False
     CAPTURE_FILE = "/tmp/ob_command_capture.txt"
     STATIC_BRUSHES = ["Light","Icing","OilPaint","Ink","ThickPaint","WetPaint","Marker","TaperedMarker","PinchedMarker","Highlighter","Flat","TaperedFlat","PinchedFlat","SoftHighlighter","VelvetInk"
     ,"DuctTape","Paper","CelVinyl", "Toon"]
@@ -243,7 +243,10 @@ class ob:
             urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?draw.opentypetext={text}")
         @staticmethod
         def svg(svgPathString):
-            urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?draw.svg={svgPathString}")
+            # urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?draw.svg={svgPathString}")
+            data = urllib.parse.urlencode({"draw.svg":f"{svgPathString}"}).encode()
+            req  = urllib.request.Request(f"http://{ob.OB_HOST}:40074/api/v1", data=data) # "POST"
+            resp = urllib.request.urlopen(req)
             if ob.CAPTURE_COMMAND:
               print(f"http://{ob.OB_HOST}:40074/api/v1?draw.svg={svgPathString}", file=open(ob.CAPTURE_FILE, 'a'))
         @staticmethod
