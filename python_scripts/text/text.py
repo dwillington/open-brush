@@ -83,7 +83,7 @@ def text():
 
 svgDict = {}
 def parseSVGs():
-  doc = minidom.parse("LUCON.svg")
+  doc = minidom.parse("fonts/LUCON.svg")
   for ipath, path in enumerate(doc.getElementsByTagName("glyph")):
     if path.hasAttribute('d') == False: continue
     u = path.getAttribute('unicode')
