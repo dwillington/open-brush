@@ -52,9 +52,15 @@
         </label><br><br>
         <table>
           <tr>
-           <td><label>Position:</td><td><input id="campos.x" value="0"></td><td><input id="campos.y" value="11"></td><td><input id="campos.z" value="0"></label></td>
+           <td><label>Position:</td>
+           <td><input id="campos.x" value="0"></td>
+           <td><input id="campos.y" value="11"></td>
+           <td><input id="campos.z" value="0"></label></td>
           <tr>
-           <td><label>Target:</td><td><input id="camtarget.x" value="0"></td><td><input id="camtarget.y" value="11"></td><td><input id="camtarget.z" value="8"></label></td>
+           <td><label>Target:</td>
+           <td><input id="camtarget.x" value="0"></td>
+           <td><input id="camtarget.y" value="11"></td>
+           <td><input id="camtarget.z" value="8"></label></td>
           </tr>
           <tr>
            <td><td><button onclick='setCam();'>Set</button></td>
@@ -165,18 +171,33 @@
 
     }
 
+    function changeDbyOne(d, val) {
+        var c = parseInt(document.getElementById(`campos.${d}`).value);
+        c += val;
+        document.getElementById(`campos.${d}`).value = c;
+        c = parseInt(document.getElementById(`camtarget.${d}`).value);
+        c += val;
+        document.getElementById(`camtarget.${d}`).value = c;
+    }
+
     var moveCamera = function(e) {
         if (e.target.id==="moveUp") {
+            changeDbyOne("y", 1);
             sendCommand("spectator.move.by=0,1,0");
         } else if (e.target.id==="moveDown") {
+            changeDbyOne("y", -1);
             sendCommand("spectator.move.by=0,-1,0");
         } else if (e.target.id==="moveLeft") {
+            changeDbyOne("x", -1);
             sendCommand("spectator.move.by=-1,0,0");
         } else if (e.target.id==="moveRight") {
+            changeDbyOne("x", 1);
             sendCommand("spectator.move.by=1,0,0");
         } else if (e.target.id==="moveForward") {
+            changeDbyOne("z", 1);
             sendCommand("spectator.move.by=0,0,1");
         } else if (e.target.id==="moveBack") {
+            changeDbyOne("z", -1);
             sendCommand("spectator.move.by=0,0,-1");
         }
     }
