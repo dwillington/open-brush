@@ -7,8 +7,9 @@ $file_name=$args[0]
 
 ForEach ($line in Get-Content $file_name) {
   if ($line) { # NOT EMPTY
-    # Write-Output $line
-    Invoke-WebRequest $line | Out-Null
+    $line = "http://localhost:40074/api/v1?${line}"
+    Write-Output $line
+    # Invoke-WebRequest $line | Out-Null
   } 
   # break
 }

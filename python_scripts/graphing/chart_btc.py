@@ -31,7 +31,7 @@ def read_csv():
 
 svgDict = {}
 def parseSVGs():
-  files = glob.glob("../text/Aldrich-Regular/*.svg")
+  files = glob.glob("../text/AdventPro/*.svg")
   for fullfile in files:
     filename = os.path.basename(fullfile)
     name = os.path.splitext(f"{filename}")[0]
