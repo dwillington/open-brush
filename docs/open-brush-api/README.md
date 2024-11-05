@@ -256,7 +256,60 @@ C:\Users\YOUR_USERNAME\AppData\LocalLow\Icosa\Open Brush\Player.log
 <img src="images/player_log.JPG" width="200" />
 
 ___
+NOTE: layer=0 is the Main layer. This is where many OB "objects" may live. For e.g. if you create a camera path, it will "live" in layer=0. If you deactviate layer=0, you may loser your camera path and wonder what happened? I was able to use rapid swapping of layers to simulate animation. I wanted to record this animation using a camera path I recorded.
 
+```
+while true; do
+  for i in {0..7}; do
+    ob layer.show=$i
+    ob layer.hide=$i
+  done
+done 
+```
+
+If you note above, I perform a **hide** on layer=0. To create animations, only draw on layer>0, and swap those layers so you will not lose the camera path on layer=9, or any other objects for that matter.
+
+See [animations](animations.md) for more...
+
+https://docs.openbrush.app/alternate-and-experimental-builds/old-or-completed-feature-builds/layers
+___
+
+
+**layer.add**
+
+Adds a new layer
+
+**layer.clear (int layer)**
+
+Clears the contents of a layer
+
+**layer.delete (int layer)**
+
+Deletes a layer
+
+**layer.squash (int squashedLayer, int destinationLayer)**
+
+Move everything from one layer to another then removes the empty layer
+
+**layer.activate (int layer)**
+
+Make a layer the active layer
+
+**layer.show (int layer)**
+
+Make a layer visible
+
+**layer.hide (int layer)**
+
+Hide a layer
+
+**layer.toggle (int layer)**
+
+Toggles a layer between visible and hidden
+
+
+___
+___
 
 **stroke.delete** (int index)[ Try it](http://localhost:40074/api/v1?stroke.delete=0)
 
