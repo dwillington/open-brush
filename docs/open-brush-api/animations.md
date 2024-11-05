@@ -15,7 +15,7 @@ num_layers = 16
 t = [i/(num_layers//2) + math.pi/2 for i in range(num_layers)]
 ```
 
-It's a "Riemann" parameteric equation over time t0, a different layer sketched for each value in the list t above. NOTE: do not sketch on layer=0, only on layer>0. 
+It's a "Riemann" parameteric equation over time t0, a different layer sketched for each value in the list t above. NOTE: DO NOT sketch on layer=0, only on layer>0. 
 This is because the camera path "lives" in layer=0. Now, you can loop over swapping layers:
 
 ```
