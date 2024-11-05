@@ -35,6 +35,16 @@ while True:
     ob.layer.show(num)
     time.sleep(0.1)
     ob.layer.hide(num)
+
+# bash
+num_layers=16
+while true; do
+  for i in {0..$num_layers}; do
+    ob layer.show=$i
+    ob layer.hide=$i
+  done
+done 
+
 ```
 
 And while all this is occuring, you can interact with and record a camera path on the Main layer, which should be active as you never touched it programatically.
