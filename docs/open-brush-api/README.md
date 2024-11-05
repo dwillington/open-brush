@@ -256,20 +256,8 @@ C:\Users\YOUR_USERNAME\AppData\LocalLow\Icosa\Open Brush\Player.log
 <img src="images/player_log.JPG" width="200" />
 
 ___
-NOTE: layer=0 is the Main layer. This is where many OB "objects" may live. For e.g. if you create a camera path, it will "live" in layer=0. If you deactviate layer=0, you may loser your camera path and wonder what happened? I was able to use rapid swapping of layers to simulate animation. I wanted to record this animation using a camera path I recorded.
 
-```
-while true; do
-  for i in {0..7}; do
-    ob layer.show=$i
-    ob layer.hide=$i
-  done
-done 
-```
-
-If you note above, I perform a **hide** on layer=0. To create animations, only draw on layer>0, and swap those layers so you will not lose the camera path on layer=9, or any other objects for that matter.
-
-See [animations](animations.md) for more...
+See [animations](animations.md) for more on using layers...
 
 https://docs.openbrush.app/alternate-and-experimental-builds/old-or-completed-feature-builds/layers
 ___
