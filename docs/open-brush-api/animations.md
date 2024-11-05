@@ -4,6 +4,7 @@ Here is an "animation" in Open Brush using rapid swapping of layers to acheive a
 https://github.com/user-attachments/assets/de4b1d6b-228b-4b58-ac86-7861c3627b05
 
 ```
+# python
 param_eq = {
   "name": "Riemann",
   "xformula": ["u*v"],
@@ -15,10 +16,19 @@ num_layers = 16
 t = [i/(num_layers//2) + math.pi/2 for i in range(num_layers)]
 ```
 
-It's a "Riemann" parameteric equation over time t0, a different layer sketched for each value in the list t above. NOTE: DO NOT sketch on layer=0, only on layer>0. 
-This is because the camera path "lives" in layer=0. Now, you can loop over swapping layers:
+It's a "Riemann" parameteric equation over time t0, a different layer sketched for each value in the list t above.
+
+
+NOTE: "Camera paths live on layers" (@andybak).  I recommend you use layer=0 for the camera path.
+You can start by creating a trivial camera path on a blank sketch as the first thing you do.
+
+Then you can sketch the animation frames on layer>0. Do not sketch on layer=0, only on layer>0, b/c we don't want to swap layer=0, Main layer, where the camera path "lives".
+As a test, you can start with 2 new layers, and sketch a trivial line in each.
+
+Now, you can loop over swapping layers:
 
 ```
+# python
 while True:
   for i in range(num_layers):
     num=i+1
@@ -27,7 +37,8 @@ while True:
     ob.layer.hide(num)
 ```
 
-And while all this is occuring, you can create and record a camera path on the Main layer, which should be active as you never touched it programatically.
+And while all this is occuring, you can interact with and record a camera path on the Main layer, which should be active as you never touched it programatically.
+
 
 Note the final mp4 will have a stuttering effect, as it will capture moments when the canvas was blank while a layer was being swapped out, between hide and show.
 You can remove these frames for a smooth mp4 as follows:
