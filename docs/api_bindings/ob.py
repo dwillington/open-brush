@@ -214,8 +214,22 @@ class ob:
         def import_(location):
             urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?model.import={location}")
         @staticmethod
+        def rotation(index,rotation):
+            urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?model.rotation={index},{rotation}")
+        @staticmethod
+        def scale(index,scale):
+            urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?model.scale={index},{scale}")
+        @staticmethod
         def position(index, position):
             urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?model.position={index},{position}")
+        @staticmethod
+        def webimport(url):
+            data = urllib.parse.urlencode({"model.webimport":f"{url}"}).encode()
+            req  = urllib.request.Request(f"http://{ob.OB_HOST}:40074/api/v1", data=data)
+            resp = urllib.request.urlopen(req)
+            if ob.CAPTURE_COMMAND:
+              ob.logCommand(f"http://{ob.OB_HOST}:40074/api/v1?model.webimport={url}")
+            return resp
     class guide:
         @staticmethod
         def add(type):
