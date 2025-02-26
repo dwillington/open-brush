@@ -7,3 +7,7 @@ mycolorpy
 geopandas
 svg_path_transform
 svg.path
+svgpathtools
+bcolors==1.0.2
+pyvista
+trimesh

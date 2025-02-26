@@ -15,6 +15,12 @@ class ob:
     def logCommand(log):
       print(log.replace(log.split('?')[0] + '?', ''), file=open(ob.CAPTURE_FILE, 'a'))
 
+    @staticmethod
+    def sendCommand(command,value):
+      data = urllib.parse.urlencode({f"{command}":f"{value}"}).encode()
+      req  = urllib.request.Request(f"http://{ob.OB_HOST}:40074/api/v1", data=data)
+      resp = urllib.request.urlopen(req)
+
     class listenfor:
         @staticmethod
         def strokes(url):
@@ -140,18 +146,18 @@ class ob:
         class home:
             @staticmethod
             def set():
-                urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?brush.home.set")
+              urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?brush.home.set")
         class transform:
             @staticmethod
             def push():
-                urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?brush.transform.push")
-                if ob.CAPTURE_COMMAND:
-                  ob.logCommand(f"http://{ob.OB_HOST}:40074/api/v1?brush.transform.push")
+              urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?brush.transform.push")
+              if ob.CAPTURE_COMMAND:
+                ob.logCommand(f"http://{ob.OB_HOST}:40074/api/v1?brush.transform.push")
             @staticmethod
             def pop():
-                urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?brush.transform.pop")
-                if ob.CAPTURE_COMMAND:
-                  ob.logCommand(f"http://{ob.OB_HOST}:40074/api/v1?brush.transform.pop")
+              urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?brush.transform.pop")
+              if ob.CAPTURE_COMMAND:
+                ob.logCommand(f"http://{ob.OB_HOST}:40074/api/v1?brush.transform.pop")
         @staticmethod
         def forcepainting(active):
             urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?brush.forcepainting={active}")
@@ -187,28 +193,44 @@ class ob:
     class layer:
         @staticmethod
         def add():
-            urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?layer.add")
+          urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?layer.add")
+          if ob.CAPTURE_COMMAND:
+            ob.logCommand(f"http://{ob.OB_HOST}:40074/api/v1?layer.add")
         @staticmethod
         def clear(layer):
-            urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?layer.clear={layer}")
+          urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?layer.clear={layer}")
+          if ob.CAPTURE_COMMAND:
+            ob.logCommand(f"http://{ob.OB_HOST}:40074/api/v1?layer.clear={layer}")
         @staticmethod
         def delete(layer):
-            urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?layer.delete={layer}")
+          urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?layer.delete={layer}")
+          if ob.CAPTURE_COMMAND:
+            ob.logCommand(f"http://{ob.OB_HOST}:40074/api/v1?layer.delete={layer}")
         @staticmethod
         def squash(squashedLayer, destinationLayer):
-            urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?layer.squash={squashedLayer},{destinationLayer}")
+          urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?layer.squash={squashedLayer},{destinationLayer}")
+          if ob.CAPTURE_COMMAND:
+            ob.logCommand(f"http://{ob.OB_HOST}:40074/api/v1?layer.squash={squashedLayer},{destinationLayer}")
         @staticmethod
         def activate(layer):
-            urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?layer.activate={layer}")
+          urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?layer.activate={layer}")
+          if ob.CAPTURE_COMMAND:
+            ob.logCommand(f"http://{ob.OB_HOST}:40074/api/v1?layer.activate={layer}")
         @staticmethod
         def show(layer):
-            urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?layer.show={layer}")
+          urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?layer.show={layer}")
+          if ob.CAPTURE_COMMAND:
+            ob.logCommand(f"http://{ob.OB_HOST}:40074/api/v1?layer.show={layer}")
         @staticmethod
         def hide(layer):
-            urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?layer.hide={layer}")
+          urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?layer.hide={layer}")
+          if ob.CAPTURE_COMMAND:
+            ob.logCommand(f"http://{ob.OB_HOST}:40074/api/v1?layer.hide={layer}")
         @staticmethod
         def toggle(layer):
-            urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?layer.toggle={layer}")
+          urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?layer.toggle={layer}")
+          if ob.CAPTURE_COMMAND:
+            ob.logCommand(f"http://{ob.OB_HOST}:40074/api/v1?layer.toggle={layer}")
     class model:
         @staticmethod
         def import_(location):

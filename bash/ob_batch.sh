@@ -6,7 +6,7 @@ else
   host_name=${OB_HOST}
 fi
 
-echo $OB_HOST
+echo "OB_HOST=$OB_HOST"
 
 if [ $# -eq 0 ]; then
   echo "provide path to ob_command_capture.txt"
