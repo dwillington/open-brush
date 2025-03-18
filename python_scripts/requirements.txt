@@ -11,3 +11,11 @@ svgpathtools
 bcolors==1.0.2
 pyvista
 trimesh
+beautifulsoup4
+rich
+numba
+scikit-image
+mnemonic
+qahirah
+randomcolor
+perlin-noise

@@ -86,8 +86,8 @@ class ob:
                 if ob.CAPTURE_COMMAND:
                   ob.logCommand(f"http://{ob.OB_HOST}:40074/api/v1?user.move.to={position}")
             @staticmethod
-            def by(amount):
-                urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?user.move.by={amount}")
+            def by(position):
+                urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?user.move.by={position}")
                 if ob.CAPTURE_COMMAND:
                   ob.logCommand(f"http://{ob.OB_HOST}:40074/api/v1?user.move.by={position}")
     class brush:
@@ -284,6 +284,8 @@ class ob:
         @staticmethod
         def text(text):
             urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?draw.text={text}")
+            if ob.CAPTURE_COMMAND:
+              ob.logCommand(f"http://{ob.OB_HOST}:40074/api/v1?draw.text={text}")
         @staticmethod
         def opentypetext(text):
             urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?draw.opentypetext={text}")
