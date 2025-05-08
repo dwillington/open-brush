@@ -79,6 +79,10 @@ class ob:
         def off():
             urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?spectator.off")
     class user:
+        class turn:
+            @staticmethod
+            def y(angle):
+                urllib.request.urlopen(f"http://{ob.OB_HOST}:40074/api/v1?user.turn.y={angle}")
         class move:
             @staticmethod
             def to(position):
