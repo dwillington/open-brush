@@ -1,7 +1,9 @@
 # ../../docs/README.md
+import os
+import sys
+sys.path.append("..")  # Add parent directory to Python path
 from ob import ob
 import socket
-import os
 import time
 import requests
 from datetime import date, timedelta

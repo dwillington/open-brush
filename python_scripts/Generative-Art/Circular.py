@@ -1,6 +1,8 @@
 from graphics.Geometry import Line as draw_line
 from graphics.Vector import Vector as vec2
 import os
+import sys
+sys.path.append("..")  # Add parent directory to Python path
 from ob import ob
 import math
 import random

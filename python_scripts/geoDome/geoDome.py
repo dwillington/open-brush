@@ -1,12 +1,11 @@
 #! /usr/bin/env python
 
 import os
+import sys
+sys.path.append("..")  # Add parent directory to Python path
 from ob import ob
 import random
 import socket
-import sys
-sys.path.append("..")
-import ob_helper
 
 def getDPC(x,y,z):
   SCALER=10
@@ -42,7 +41,7 @@ def fromDomeOutput():
     startFaces = 2+numOfCoordinates
 
     # ONLY DRAW LINES
-    if False:
+    if True:
       ob.brush.type("Dots")
       for i in range(startFaces,startFaces+numOfFaces):
           v = content[i].rstrip().split(" ")

@@ -1,3 +1,6 @@
+import os
+import sys
+sys.path.append("..")  # Add parent directory to Python path
 from ob import ob
 #----------------------------------------------------------------
 # References:
@@ -7,7 +10,6 @@ from ob import ob
 #
 #----------------------------------------------------------------
 
-import os
 import random
 import math
 import decimal as D
@@ -17,9 +19,6 @@ import GeoSphere as G
 import config as CF
 
 import socket
-import sys
-sys.path.append("..")
-import ob_helper
 
 # getDrawPathCoordinates
 def getDPC(point):
@@ -313,9 +312,10 @@ def main():
     if "OB_HOST" in os.environ:
         ob.OB_HOST = os.environ['OB_HOST']
 
-    ob_helper.sendCommands(["new"])
-    ob_helper.sendCommands(["brush.type=Light"])
-    ob_helper.sendCommands(["user.move.to=0,5,22"])
+
+    ob.new()
+    ob.brush.type("Light")
+    ob.user.move.to("0,5,22")
 
     geodesicDome()
 

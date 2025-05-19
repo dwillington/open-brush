@@ -1,8 +1,8 @@
 import os
+import sys
+sys.path.append("..")  # Add parent directory to Python path
 from ob import ob
 from graphics.Vector import Vector as vec2
-import sys
-sys.path.append("..")
 import random
 
 w, h = 1000, 1000

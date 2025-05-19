@@ -1,8 +1,8 @@
-from ob import ob
-import sys
 import os
+import sys
+sys.path.append("..")  # Add parent directory to Python path
+from ob import ob
 from datetime import datetime
-sys.path.append("../")
 import ob_helper
 import glob
 from xml.dom import minidom

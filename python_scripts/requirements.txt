@@ -19,7 +19,9 @@ mnemonic
 qahirah
 randomcolor
 perlin-noise
+noise
 opencv-python
 pyfqmr
 termcolor
 distutils
+svgutils

@@ -2,9 +2,9 @@ from graphics.Geometry import Line
 from graphics.Vector import Vector as vec2
 from graphics.Helpers import map
 import os
-from ob import ob
 import sys
-sys.path.append("..")
+sys.path.append("..")  # Add parent directory to Python path
+from ob import ob
 import random
 import math
 

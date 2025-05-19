@@ -1,4 +1,6 @@
 import os
+import sys
+sys.path.append(".")  # Add current directory to Python path
 from ob import ob
 import argparse
 import urllib

@@ -1,6 +1,5 @@
 import requests
 import random
-import socket
 import math
 
 ob_host = "127.0.0.1"

@@ -1,8 +1,8 @@
 import os
 import sys
-sys.path.append("../")
-import ob_helper
+sys.path.append("..")  # Add parent directory to Python path
 from ob import ob
+import ob_helper
 import argparse
 from xml.dom import minidom
 from svg.path import parse_path
@@ -83,7 +83,7 @@ def text():
 
 svgDict = {}
 def parseSVGs():
-  doc = minidom.parse("fonts/LUCON.svg")
+  doc = minidom.parse("/mnt/c/temp/git_repos/dwillington/open_brush_assets/fonts/lucon.svg")
   for ipath, path in enumerate(doc.getElementsByTagName("glyph")):
     if path.hasAttribute('d') == False: continue
     u = path.getAttribute('unicode')
@@ -126,7 +126,7 @@ def main():
   ob.new()
   ob.brush.type("Light")
   ob.brush.size.set(0.01)
-  ob.brush.move.to("0,0,0")
+  ob.brush.move.to("0,10,0")
   ob.user.move.to("0,0,20")
   
   # parser = argparse.ArgumentParser()

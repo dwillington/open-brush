@@ -95,15 +95,15 @@ def setup():
     for i in range(grid_x):
         for j in range(grid_y):
             if (i < grid_x - 1):
-                if (random.uniform(0,1) < .3 and grid[i][j] is 1):
+                if (random.uniform(0,1) < .3 and grid[i][j] == 1):
                     grid[i][j] = 2
                     grid[i + 1][j] = 0
             if (j < grid_y - 1):
-                if (random.uniform(0,1) < .3 and grid[i][j] is 1 and grid[i][j + 1] is not 0):
+                if (random.uniform(0,1) < .3 and grid[i][j] == 1 and grid[i][j + 1] != 0):
                     grid[i][j] = 3
                     grid[i][j + 1] = 0
             if (i < grid_x - 1 and j < grid_y - 1):
-                if (random.uniform(0,1) < .2 and grid[i][j] is 1 and grid[i][j + 1] is 1 and grid[i + 1][j] is 1 and grid[i + 1][j + 1] is 1):
+                if (random.uniform(0,1) < .2 and grid[i][j] == 1 and grid[i][j + 1] == 1 and grid[i + 1][j] == 1 and grid[i + 1][j + 1] == 1):
                     grid[i][j] = 4
                     grid[i + 1][j] = 0
                     grid[i][j + 1] = 0
@@ -123,7 +123,7 @@ def setup():
             short_y = sep_y/2 - diff
             long_y = sep_y - diff
             
-            if (cell is 1):
+            if (cell == 1):
                 
                 o = (0, 0, 0, 0)
                 f = get_random_element(colors)
@@ -132,7 +132,7 @@ def setup():
                 o = (0, 0, 0, 255)
                 f = (0, 0, 255, 0)
                 draw_rect(current_x, current_y, short_x, short_y, base_deform, -1, o, f)
-            if (cell is 2):
+            if (cell == 2):
                 
                 o = (0, 0, 0, 0)
                 f = get_random_element(colors)
@@ -141,7 +141,7 @@ def setup():
                 o = (0, 0, 0, 255)
                 f = (0, 0, 255, 0)
                 draw_rect(current_x + sep_x/2, current_y, long_x, short_y, base_deform, -1, o, f)
-            if (cell is 3):
+            if (cell == 3):
                 
                 o = (0, 0, 0, 0)
                 f = get_random_element(colors)
@@ -150,7 +150,7 @@ def setup():
                 o = (0, 0, 0, 255)
                 f = (0, 0, 255, 0)
                 draw_rect(current_x, current_y + sep_y/2, short_x, long_y, base_deform, -1, o, f)
-            if (cell is 4):
+            if (cell == 4):
                 
                 o = (0, 0, 0, 0)
                 f = get_random_element(colors)

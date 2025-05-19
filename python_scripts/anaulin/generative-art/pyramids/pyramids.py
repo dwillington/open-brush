@@ -1,11 +1,12 @@
+import os
+import sys
+sys.path.append("../..")  # Add parent's parent directory to Python path
 from ob import ob
 import random
-
-import sys
-import os
 sys.path.append(os.path.abspath('..'))
 from lib import palettes
 from lib import colors
+
 
 sys.path.append(os.path.abspath('../../../'))
 

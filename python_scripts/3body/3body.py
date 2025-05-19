@@ -1,11 +1,11 @@
-from ob import ob
-import sys
 import os
+import sys
+sys.path.append("..")  # Add parent directory to Python path
+from ob import ob
 import random
 import numpy as np 
 import matplotlib.pyplot as plt 
 from mpl_toolkits.mplot3d import Axes3D
-sys.path.append("..")
 import ob_helper
 
 
