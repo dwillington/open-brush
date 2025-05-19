@@ -1,10 +1,7 @@
 from graphics.Geometry import Line as draw_line
 from graphics.Vector import Vector as vec2
 import os
-import socket
-import sys
-sys.path.append("..")
-import ob_helper
+from ob import ob
 import math
 import random
 
@@ -122,32 +119,32 @@ def draw():
                         break
 
             randomColor = format(random.randint(0,16777215),'x')
-            ob_helper.sendCommands([f"color.set.html={randomColor}"])
+            ob.color.set.html(randomColor)
             for line in my_lines:
                 if line.get_length() > 0:
-                    ob_helper.drawLineOB(line.p0,line.p1)
+                    factor = 0.01  # Scale factor for coordinates
+                    ob.draw.path(f"[{line.p0[0]*factor},{line.p0[1]*factor},0],[{line.p1[0]*factor},{line.p1[1]*factor},0]")
 
 
 def main():
-    hostname = socket.gethostname()
     if "OB_HOST" in os.environ:
-      ob_helper.ob_host=os.environ['OB_HOST']
+        ob.OB_HOST = os.environ['OB_HOST']
 
-    ob_helper.sendCommands(["new"])
-    ob_helper.sendCommands(["brush.move.to=0,0,0","brush.look.up"])
-    ob_helper.sendCommands(["user.move.to=-5,10,10"])
+    ob.new()
+    ob.brush.move.to("0,0,0")
+    ob.user.move.to("-5,10,10")
 
-    ob_helper.sendCommands(["brush.type=Light"])
-    ob_helper.sendCommands(["brush.size.set=.2"])
+    ob.brush.type("Light")
+    ob.brush.size.set(.2)
 
-    # ob_helper.sendCommands(["brush.type=Icing"])
-    # ob_helper.sendCommands(["brush.size.set=0.1"])
+    # ob.brush.type("Icing")
+    # ob.brush.size.set(0.1)
 
-    # ob_helper.sendCommands(["brush.type=NeonPulse"])
-    # ob_helper.sendCommands(["brush.size.set=.2"])
+    # ob.brush.type("NeonPulse")
+    # ob.brush.size.set(.2)
 
     draw()
-    ob_helper.sendCommands(["debug.brush"])
+    ob.debug.brush()
 
 if __name__ == '__main__':
     main()

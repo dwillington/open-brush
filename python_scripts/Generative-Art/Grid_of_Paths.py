@@ -1,10 +1,9 @@
+import os
+from ob import ob
 from graphics.Vector import Vector as vec2
-import socket
 import sys
 sys.path.append("..")
-import ob_helper
 import random
-import math
 
 w, h = 1000, 1000
 
@@ -91,17 +90,16 @@ def setup():
         current_x += sep_x
 
 def main():
-    hostname = socket.gethostname()
     if "OB_HOST" in os.environ:
-      ob_helper.ob_host=os.environ['OB_HOST']
+        ob.OB_HOST = os.environ['OB_HOST']
 
-    ob_helper.sendCommands(["new"])
-    ob_helper.sendCommands(["brush.move.to=0,0,0","brush.look.up"])
-    ob_helper.sendCommands(["user.move.to=-5,10,10"])
-    ob_helper.sendCommands(["brush.size.set=0.01"])
+    ob.new()
+    ob.brush.move.to("0,0,0")
+    ob.user.move.to("-5,10,10")
+    ob.brush.size.set(0.01)
 
     setup()
-    ob_helper.sendCommands(["debug.brush"])
+    ob.debug.brush()
 
 # Call the main function
 if __name__ == '__main__':

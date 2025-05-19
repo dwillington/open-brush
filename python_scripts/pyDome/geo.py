@@ -1,6 +1,4 @@
-#! /usr/bin/env python
-# -*- python -*-
-
+from ob import ob
 #----------------------------------------------------------------
 # References:
 #   The calculations used in this program are all from the site
@@ -250,8 +248,8 @@ def geodesicDome():
 
     for e in gs.Edge_List:
         randomColor = format(random.randint(0,16777215),'x')
-        ob_helper.sendCommands([f"color.set.html={randomColor}"])
-        ob_helper.sendCommands([f"draw.path=[{getDPC(e.x1)}],[{getDPC(e.x2)}]"])
+        ob.color.set.html(randomColor)
+        ob.draw.path(f"[{getDPC(e.x1)}],[{getDPC(e.x2)}]")
         # print(e.Get_Edge_Coordinates())
 
     exit()
@@ -312,9 +310,8 @@ def geodesicDome():
 
 def main():
 
-    hostname = socket.gethostname()
     if "OB_HOST" in os.environ:
-      ob_helper.ob_host=os.environ['OB_HOST']
+        ob.OB_HOST = os.environ['OB_HOST']
 
     ob_helper.sendCommands(["new"])
     ob_helper.sendCommands(["brush.type=Light"])

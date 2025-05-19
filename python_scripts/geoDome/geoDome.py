@@ -1,6 +1,7 @@
 #! /usr/bin/env python
 
 import os
+from ob import ob
 import random
 import socket
 import sys
@@ -41,37 +42,31 @@ def fromDomeOutput():
     startFaces = 2+numOfCoordinates
 
     # ONLY DRAW LINES
-    ob_helper.sendCommands(["brush.type=Dots"])
-    for i in range(startFaces,startFaces+numOfFaces):
-        v = content[i].rstrip().split(" ")
-        draw_path=f"draw.path=[{coordinates[int(v[1])]}],[{coordinates[int(v[2])]}],[{coordinates[int(v[3])]}],[{coordinates[int(v[1])]}]"
-        # randomColor = format(random.randint(0,16777215),'x')
-        # ob_helper.sendCommands([f"color.set.html={randomColor}"])
-        ob_helper.sendCommands([f"{draw_path}"])
-
     if False:
-      # ONLY DRAW THE SURFACE WITH A HULL BRUSH
-      ob_helper.sendCommands(["brush.type=Diamond"]) # ShinyHull,MatteHull,UnlitHull,Diamond
+      ob.brush.type("Dots")
       for i in range(startFaces,startFaces+numOfFaces):
           v = content[i].rstrip().split(" ")
-          draw_path=f"draw.path=[{coordinates[int(v[1])]}],[{coordinates[int(v[2])]}],[{coordinates[int(v[3])]}],[{coordinates[int(v[1])]}]"
-          ob_helper.sendCommands([f"{draw_path}"])
+          draw_path=f"[{coordinates[int(v[1])]}],[{coordinates[int(v[2])]}],[{coordinates[int(v[3])]}],[{coordinates[int(v[1])]}]"
+          ob.draw.path(draw_path)
+          # randomColor = format(random.randint(0,16777215),'x')
+          # ob.color.set.html(randomColor)
+    else:
+      # ONLY DRAW THE SURFACE WITH A HULL BRUSH
+      ob.brush.type("Diamond")
+      for i in range(startFaces,startFaces+numOfFaces):
+          v = content[i].rstrip().split(" ")
+          draw_path=f"[{coordinates[int(v[1])]}],[{coordinates[int(v[2])]}],[{coordinates[int(v[3])]}],[{coordinates[int(v[1])]}]"
+          ob.draw.path(draw_path)
 
-          # draw_path=f"draw.path=[{coordinates[int(v[1])]}],[{coordinates[int(v[2])]}]"
-          # ob_helper.sendCommands([f"{draw_path}"])
-          # draw_path=f"draw.path=[{coordinates[int(v[2])]}],[{coordinates[int(v[3])]}]"
-          # ob_helper.sendCommands([f"{draw_path}"])
-          # draw_path=f"draw.path=[{coordinates[int(v[3])]}],[{coordinates[int(v[1])]}]"
-          # ob_helper.sendCommands([f"{draw_path}"])
 
 
 def main():
   if "OB_HOST" in os.environ:
-    ob_helper.ob_host=os.environ['OB_HOST']
+    ob.OB_HOST = os.environ['OB_HOST']
 
-  ob_helper.sendCommands(["new"])
-  ob_helper.sendCommands(["brush.move.to=0,0,0","brush.look.up"])
-  ob_helper.sendCommands(["user.move.to=0,4,40"])
+  ob.new()
+  ob.user.move.to("0,4,40")
+  ob.user.move.to("0,4,40")
 
   fromDomeOutput()
 
