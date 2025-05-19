@@ -1,4 +1,4 @@
-import math
+from ob import ob
 import random
 
 import sys
@@ -7,9 +7,7 @@ sys.path.append(os.path.abspath('..'))
 from lib import palettes
 from lib import colors
 
-import socket
 sys.path.append(os.path.abspath('../../../'))
-import ob_helper
 
 def pyramid(ctx, x, y, width, height, color, random_center=True):
     if random_center:
@@ -32,10 +30,8 @@ def getDPC(point,Z=0):
   return f"{point[0]/SCALER},{(-point[1]/SCALER)+Y_OFFSET},{Z}"
 
 def triangle(ctx, p1, p2, p3, color):
-    ob_helper.sendCommands([f"color.set.rgb={color[0]},{color[1]},{color[2]}"])
-    ob_helper.sendCommands([f"draw.path=[{getDPC(p1)}]," + 
-      f"[{getDPC(p2)}]," + 
-      f"[{getDPC(p3)}]"])
+    ob.color.set.rgb(f"{round(color[0],2)},{round(color[1],2)},{round(color[2],2)}")
+    ob.draw.path(f"[{getDPC(p1)}],[{getDPC(p2)}],[{getDPC(p3)}]")
 
     # ctx.move_to(*p1)
     # for p in [p1, p2, p3]:
@@ -43,13 +39,23 @@ def triangle(ctx, p1, p2, p3, color):
     # ctx.set_source_rgb(*color)
     # ctx.fill()
 
+
+def make_random(filename="output.png", p=random.choice(palettes.PALETTES), img_width=1000, img_height=1000):
+    MAX_SQUARES = 10
+    c = random.randint(5, MAX_SQUARES)
+    r = random.randint(5, MAX_SQUARES) if random.random() < 0.5 else c
+    if img_width != img_height:
+        img_width = img_height = max(img_width, img_height)
+    print(filename, c, r, p, img_width, img_height)
+    main(filename=filename.format(1), palette=p, columns=c, rows=r, img_height=img_height, img_width=img_width)
+
 def main(filename="output.png", img_width=1000, img_height=1000, palette=random.choice(palettes.PALETTES), columns=15, rows=10):
     if "OB_HOST" in os.environ:
-      ob_helper.ob_host=os.environ['OB_HOST']
-    ob_helper.sendCommands(["new"])
-    ob_helper.sendCommands(["brush.move.to=0,0,0","brush.look.up"])
-    ob_helper.sendCommands(["user.move.to=-5,8,15"])
-    ob_helper.sendCommands(["brush.type=UnlitHull"])
+        ob.OB_HOST = os.environ['OB_HOST']
+    ob.new()
+    ob.brush.move.to("0,0,0")
+    ob.user.move.to("-5,8,15")
+    ob.brush.type("UnlitHull")
     ctx = None
 
     # ims = cairo.ImageSurface(cairo.FORMAT_ARGB32, img_width, img_height)
@@ -66,15 +72,6 @@ def main(filename="output.png", img_width=1000, img_height=1000, palette=random.
             pyramid(ctx, x, y, img_width // columns, img_height // rows, palettes.hex_to_tuple(random.choice(palette['colors'])))
 
     # ims.write_to_png(filename)
-
-def make_random(filename="output.png", p=random.choice(palettes.PALETTES), img_width=1000, img_height=1000):
-    MAX_SQUARES = 10
-    c = random.randint(5, MAX_SQUARES)
-    r = random.randint(5, MAX_SQUARES) if random.random() < 0.5 else c
-    if img_width != img_height:
-        img_width = img_height = max(img_width, img_height)
-    print(filename, c, r, p, img_width, img_height)
-    main(filename=filename.format(1), palette=p, columns=c, rows=r, img_height=img_height, img_width=img_width)
 
 if __name__ == "__main__":
     for idx in range(1):

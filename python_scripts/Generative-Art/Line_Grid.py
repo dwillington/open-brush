@@ -3,10 +3,8 @@ from graphics.Vector import Vector as vec2
 from graphics.Helpers import map
 import os
 from ob import ob
-import socket
 import sys
 sys.path.append("..")
-import ob_helper
 import random
 import math
 
