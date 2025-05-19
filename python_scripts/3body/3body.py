@@ -46,11 +46,14 @@ def three_body():
     given 3 object and their locations according to Newton's laws
     """
     # m_1, m_2, m_3 = self.m1, self.m2, self.m3
-    planet_1_dv = -9.8 * m_2 * (p1 - p2)/(np.sqrt((p1[0] - p2[0])**2 + (p1[1] - p2[1])**2 + (p1[2] - p2[2])**2)**3) - \ 9.8 * m_3 * (p1 - p3)/(np.sqrt((p1[0] - p3[0])**2 + (p1[1] - p3[1])**2 + (p1[2] - p3[2])**2)**3)
-
-    planet_2_dv = -9.8 * m_3 * (p2 - p3)/(np.sqrt((p2[0] - p3[0])**2 + (p2[1] - p3[1])**2 + (p2[2] - p3[2])**2)**3) - \ 9.8 * m_1 * (p2 - p1)/(np.sqrt((p2[0] - p1[0])**2 + (p2[1] - p1[1])**2 + (p2[2] - p1[2])**2)**3)
-
-    planet_3_dv = -9.8 * m_1 * (p3 - p1)/(np.sqrt((p3[0] - p1[0])**2 + (p3[1] - p1[1])**2 + (p3[2] - p1[2])**2)**3) - \ 9.8 * m_2 * (p3 - p2)/(np.sqrt((p3[0] - p2[0])**2 + (p3[1] - p2[1])**2 + (p3[2] - p2[2])**2)**3)
+    planet_1_dv = (-9.8 * m_2 * (p1 - p2)/(np.sqrt((p1[0] - p2[0])**2 + (p1[1] - p2[1])**2 + (p1[2] - p2[2])**2)**3) - 
+                   9.8 * m_3 * (p1 - p3)/(np.sqrt((p1[0] - p3[0])**2 + (p1[1] - p3[1])**2 + (p1[2] - p3[2])**2)**3))
+    
+    planet_2_dv = (-9.8 * m_3 * (p2 - p3)/(np.sqrt((p2[0] - p3[0])**2 + (p2[1] - p3[1])**2 + (p2[2] - p3[2])**2)**3) - 
+                   9.8 * m_1 * (p2 - p1)/(np.sqrt((p2[0] - p1[0])**2 + (p2[1] - p1[1])**2 + (p2[2] - p1[2])**2)**3))
+    
+    planet_3_dv = (-9.8 * m_1 * (p3 - p1)/(np.sqrt((p3[0] - p1[0])**2 + (p3[1] - p1[1])**2 + (p3[2] - p1[2])**2)**3) - 
+                   9.8 * m_2 * (p3 - p2)/(np.sqrt((p3[0] - p2[0])**2 + (p3[1] - p2[1])**2 + (p3[2] - p2[2])**2)**3))
 
     return planet_1_dv, planet_2_dv, planet_3_dv
     
@@ -74,16 +77,17 @@ def three_body():
   p1[0], p2[0], p3[0] = p1_start, p2_start, p3_start
   v1[0], v2[0], v3[0] = v1_start, v2_start, v3_start
 
-  # https://matplotlib.org/stable/users/explain/colors/colormaps.html
-  from mycolorpy import colorlist as mcp
-  color1 = mcp.gen_color(cmap="ocean",n=int(steps/step_size))
-  color2 = mcp.gen_color(cmap="autumn",n=int(steps/step_size))
-  color3 = mcp.gen_color(cmap="spring",n=int(steps/step_size))
 
   dpc_helper = ob_helper.DPC(0.5,0,5)
   counter = 0
   step_size = 500
   segment_counter = 0
+
+  # https://matplotlib.org/stable/users/explain/colors/colormaps.html
+  from mycolorpy import colorlist as mcp
+  color1 = mcp.gen_color(cmap="ocean",n=int(steps/step_size))
+  color2 = mcp.gen_color(cmap="autumn",n=int(steps/step_size))
+  color3 = mcp.gen_color(cmap="spring",n=int(steps/step_size))
 
   # evolution of the system
   for i in range(steps-1):
@@ -113,29 +117,26 @@ def three_body():
         # n0 = "0,0,0"
         n0 = dpc_helper.get(p1[i+1][0],p1[i+1][1]+rect_height,p1[i+1][2])
         n1 = dpc_helper.get(p1[i+1][0],p1[i+1][1],p1[i+1][2])
-        draw_path = f"draw.paths=[[{np}],[{n1}]]"
-        # draw_path = f"draw.paths=[[{n0}],[{n1}]],[[{np}],[{n1}]],[[{np0}],[{n0}]]"
         
-        ob_helper.sendCommands([f"{draw_path}"])
-        return draw_path
+        ob.draw.path(f"[{np}],[{n1}]")
       
       color = color1[counter].replace('#','')
-      ob_helper.sendCommands([f"color.set.html={color}"])
+      ob.color.set.html(color)
       draw_path = draw_orbit_segment(p1, i)
 
       color = color2[counter].replace('#','')
-      ob_helper.sendCommands([f"color.set.html={color}"])
+      ob.color.set.html(color)
       draw_path = draw_orbit_segment(p2, i)
 
       color = color3[counter].replace('#','')
-      ob_helper.sendCommands([f"color.set.html={color}"])
+      ob.color.set.html(color)
       draw_path = draw_orbit_segment(p3, i)
 
       if segment_counter > 1: # FIRST 1-2 SEGMENTS CAN BE NEONPULSE TO INDICATE BODY ORIGINS
         global BRUSH_TYPE
         if BRUSH_TYPE != "DuctTape":
           BRUSH_TYPE = "DuctTape"
-          ob_helper.sendCommands([f"brush.type={BRUSH_TYPE}"])
+          ob.brush.type(BRUSH_TYPE)
       
     segment_counter += 1
 
@@ -147,13 +148,13 @@ BRUSH_TYPE = "NeonPulse"
 
 def main():
   if "OB_HOST" in os.environ:
-    ob_helper.ob_host = os.environ['OB_HOST']
+      ob.OB_HOST = os.environ['OB_HOST']
 
-  ob_helper.sendCommands(["new"])
-  ob_helper.sendCommands([f"brush.type={BRUSH_TYPE}"])
-  # ob_helper.sendCommands(["brush.size.set=0.1"])
-  ob_helper.sendCommands(["brush.move.to=0,0,0"])
-  ob_helper.sendCommands(["user.move.to=-20,-5,-7"])
+  ob.new()
+  ob.brush.type(BRUSH_TYPE)
+  ob.brush.size.set(0.1)
+  ob.brush.move.to("0,0,0")
+  ob.user.move.to("-20,-5,-7")
 
   three_body()
 
